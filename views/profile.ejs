@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile</title>
+  <style>
+    /* General Styles */
+    main {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 500px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .profile-form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      color: #555;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea,
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    .profile-preview {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .imgContainer {
+      position: relative;
+      display: inline-block;
+      width: 180px;
+      height: 180px;
+    }
+
+    .imgContainer img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid rgb(0, 0, 0);
+    }
+
+    .pensil-icon {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background-color: white;
+      border-radius: 50%;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .pensil-icon img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .btn {
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+
+    .mix {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="choosepic" style="height: 100vh;background-color: #555;"></div>
+    <div class="container">
+      <h1>Edit Profile</h1>
+      <form class="profile-form" action="/profile/<%= userInfo._id %>" method="post" enctype="multipart/form-data">
+        <!-- Profile Picture -->
+        <div class="mix">
+          <div class="form-group">
+            <div class="imgContainer">
+              <img
+                id="profile-pic"
+                style="background-size:contain;"
+                src= <%= userInfo.ProfilePic %>>
+            </div>
+            <input type="file" id="file-input" name="file-input" accept="image/*">
+          </div>
+        </div>
+
+        <!-- Username -->
+        <div class="form-group">
+          <label for="userName">Username</label>
+          <input type="text" id="userName" name="userName" value="<%= userInfo.userName %>">
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" value="<%= locals.user.email %>" readonly>
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input type="text" id="lastName" name="lastName" value="<%= userInfo.lastName %>">
+        </div>
+
+        <!-- Bio -->
+        <div class="form-group">
+          <label for="bio">Bio</label>
+          <textarea id="Bio" name="Bio" rows="3"><%= userInfo.Bio %></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn">Save Changes</button>
+      </form>
+    </div>
+  </main>
+  <script>document.getElementById('file-input').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const base65image = reader.result
+
+        fetch('/profile/<%= userInfo._id %>', {
+            method: 'POST',
+            body: base65image,
+        }).then(() => console.log("uploaded")).catch((err)=> console.log(err))
+      };
+      
+    }
+  });
+  </script>
+</body>
+</html>
