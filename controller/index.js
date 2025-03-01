@@ -13,7 +13,7 @@ async function createUser(req,res) {
         const token = createUserToken(user)
         return res.cookie("token", token).redirect("/")
     } catch (error) {
-        console.log("fuck you", error)
+        console.log("error", error)
         return  res.render("signUp",{
             errors: "already exiting email or password",
         })

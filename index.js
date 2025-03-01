@@ -5,7 +5,7 @@ const cookieparser = require("cookie-parser")
 const path = require("path")
 const {router} =require("./routes")
 const blogRout =require("./routes/blog")
-const {Connector} = require("./Database")
+const {Connector} = require("./Database/index")
 
 const port = process.env.port
 const app = express()
