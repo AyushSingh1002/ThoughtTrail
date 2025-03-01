@@ -97,7 +97,7 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
       { new: true }
     );
 
-    res.redirect(`/`);
+    res.redirect(`/profile/${req.user._id}`);
   } catch (error) {
     console.error("Error updating profile:", error.message);
     res.status(500).json({ message: "Error updating profile", error: error.message });
