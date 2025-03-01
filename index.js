@@ -17,7 +17,7 @@ app.use('/profilePic', express.static(path.join(__dirname, 'public/profilePic'))
 app.set("view engine","ejs");
 app.set("views",path.resolve("./views"))
 
-Connector("mongodb://127.0.0.1:27017/signup")
+Connector(process.env.MONGODB_URL)
 
 app.use("/", router)
 app.use("/", blogRout)
