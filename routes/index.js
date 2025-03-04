@@ -50,9 +50,15 @@ router.get("/",checkUserAuth,async(req,res)=>{
     return res.render("home",{
         user: req.user,
         blogs: blog,
-
     })
 
+})
+router.get("/a",checkUserAuth,async(req,res)=>{
+  const id = req.user._id
+  const data = await userSchema.findById(id);
+  return res.render("navbar", {
+    userInfo : data
+  })
 })
 
 

@@ -1,4 +1,5 @@
 const {validateUser} = require("../Services/Auth")
+const userSchema = require("../Model/index")
 
 async function checkUserAuth(req, res, next) {
   const userUid = req.cookies?.token
@@ -16,9 +17,8 @@ async function checkUserAuth(req, res, next) {
    return next()
   };
   
-
-  req.user = user;
-
+  const userInfo = await userSchema.findById(user._id)
+   req.user = userInfo
   next()
 }
 module.exports = checkUserAuth
