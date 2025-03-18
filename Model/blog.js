@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const { Schema } = require('mongoose');
 const blogSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -19,6 +19,10 @@ const blogSchema = new mongoose.Schema({
     type: String,
     required: true,
     default: "Personal"
+  },
+  createdby: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
   }
 }
 ,

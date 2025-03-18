@@ -1,3 +1,4 @@
+const { Schema } = require('mongoose');
 const mongoose = require('mongoose');
 
 const commentSchema = new mongoose.Schema({
@@ -6,8 +7,8 @@ const commentSchema = new mongoose.Schema({
     required : true
   },
   creater: {
-    type: String,
-    required: true
+    type: Schema.Types.ObjectId,
+    ref: "User",
   },
   onPost:{
     type: String
@@ -16,5 +17,5 @@ const commentSchema = new mongoose.Schema({
 ,
   {timestamps: true});
 
-const comment = mongoose.model('comment', commentSchema);
-module.exports = comment;
+const Comment = mongoose.model('Comment', commentSchema);
+module.exports = Comment;

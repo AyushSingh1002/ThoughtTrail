@@ -5,7 +5,7 @@ const express = require("express")
 const blogSchema= require("../Model/blog")
 const path = require("path")
 const router = express.Router()
-
+const Comment = require("../Model/comments")
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, path.resolve("./public/uploads/"))
@@ -25,9 +25,11 @@ router.post("/blog",upload.single('coverImg'), createBlog)
 
 router.get("/blog/:id",checkUserAuth,async(req,res)=>{
   const blog = await blogSchema.findById(req.params.id)
+  const comment = await Comment.find({onPost: req.params.id}).populate('creater')
     return res.render("blog",{
       blogid : blog,
       user: req.user,
+      comment: comment,
     })
 }
 )

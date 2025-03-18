@@ -105,26 +105,131 @@
             text-align: center;
             box-shadow: 0 2px 10px var(--shadow-color);
         }
+        .comment-form-container {
+            width: 80%;
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+        }
+
+        .comment-form-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .comment-form textarea {
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            resize: none;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .comment-form input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .comment-form button {
+            padding: 12px 20px;
+            font-size: 1rem;
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: bold;
+        }
+
+        .comment-form button:hover {
+            background-color: #388E3C;
+        }
+
+        .comment-form button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        #cont{
+           width: 100%;
+           display: flex;
+           justify-content: center;
+        }
     </style>
 </head>
 <body>
     <%- include("./partials/navbar.ejs") %>
-
-
+    
     <div class="container">
         <h1 class="blog-title"><%= blogid.title %></h1>
         <img class="blog-cover" src="<%= blogid.CoverImgURL %>" alt="<%= blogid.title %> cover image" loading="lazy">
         <p class="blog-content"><%= blogid.content %></p>
-
-        <div class="cta-button">
-            <a href="/">Back to Home</a>
-        </div>
         <footer>
             &copy; <%= new Date().getFullYear() %> Your Blog. All rights reserved. <a href="/">Back to Home</a>
         </footer>
     </div>
-
-
+    <div  id="cont" >
+        <div class="comment-form-container">
+            <h1 class="comment-form-title">Leave a Comment</h1>
+            <form class="comment-form" action="/" method="POST">
+                <input type="hidden" name="post" value="<%= blogid._id %>"/>
+                <textarea name="content" rows="4" placeholder="enter the comment here" required></textarea>
+                <button type="submit">Post Comment</button>
+            </form>
+        </div>
+    </div>
+    <div style="background-color: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin-top: 20px; width: 80%; margin-left: auto; margin-right: auto;">
+        <h3 style="font-size: 1.5rem; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">Comments (<%= comment.length %>)</h3>
+      
+        <% if (comment.length > 0) { %>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <% comment.forEach(comment => { %>
+              <li style="display: flex; align-items: flex-start; padding: 15px 0; border-bottom: 1px solid #eee;">
+                <!-- Profile Picture -->
+                <img 
+                  src="<%= comment.creater.ProfilePic %>" 
+                  alt="<%= comment.creater.userName %>" 
+                  style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 15px;"
+                />
+      
+                <!-- Comment Details -->
+                <div style="flex: 1;">
+                  <!-- Username and Timestamp -->
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: bold; color: #555; font-size: 1rem;"><%= comment.creater.userName %></span>
+                    <span style="color: #888; font-size: 0.85rem;"><%= new Date(comment.createdAt).toLocaleDateString() %></span>
+                  </div>
+      
+                  <!-- Comment Content -->
+                  <p style="margin: 8px 0 0; color: #444; font-size: 0.95rem; line-height: 1.5;"><%= comment.content %></p>
+                </div>
+              </li>
+            <% }); %>
+          </ul>
+        <% } else { %>
+          <div style="background-color: #f9f9f9; color: #555; padding: 20px; border-radius: 8px; text-align: center;">
+            No comments available. Be the first to comment!
+          </div>
+        <% } %>
+      </div>
+      
    
 </body>
 </html>

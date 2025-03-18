@@ -3,7 +3,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Navigation Bar with Search Box</title>
+    <title>Navigation Bar</title>
    <style>@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
     * {
       margin: 0;
@@ -12,8 +12,17 @@
       font-family: "Poppins", sans-serif;
     }
     body {
-      background: #f0faff;
+      background: linear-gradient(to bottom, #dbeafe, #ffffff);
+      height: 100%;
     }
+    #navgap{
+     margin: 1rem;
+     transition: color 150ms ease-in-out;
+    }
+    #navgap:hover {
+  text-decoration: underline;
+  color: gainsboro;
+}
     .avatar {
   width: 45px;
   height: 45px;
@@ -174,17 +183,17 @@
   <body>
     <nav class="nav">
       <i class="uil uil-bars navOpenBtn"></i>
-      <a href="#" class="logo">ThoughtTrail</a>
+      <a href="/" class="logo">ThoughtTrail</a>
       <ul class="nav-links">
         <i class="uil uil-times navCloseBtn"></i>
-        <li><a href="/">Home</a></li>
+        <li ><a id="navgap" href="/">Home</a></li>
         <% if (!locals.user) { %>
-          <li><a href="/login">Login</a></li>
-          <li><a href="/signup">SignUp</a></li>
+          <li><a id="navgap" href="/login">Login</a></li>
+          <li><a id="navgap" href="/signup">SignUp</a></li>
         <% } else { %> 
-        <li><a href="/profile/<%= user._id %>">Profile</a></li>
-        <li><a href="/blog">Create Blogs</a></li>
-        <li><a href="/logout">Log-out</a></li>
+        <li><a id="navgap" href="/profile/<%= user._id %>">Profile</a></li>
+        <li><a id="navgap" href="/blog">Create Blogs</a></li>
+        <li><a id="navgap" href="/logout">Log-out</a></li>
         <% } %>
       </ul>
       <i class="uil uil-search search-icon" id="searchIcon"></i>

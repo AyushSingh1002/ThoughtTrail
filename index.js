@@ -6,7 +6,7 @@ const path = require("path")
 const {router} =require("./routes")
 const blogRout =require("./routes/blog")
 const {Connector} = require("./Database/index")
-
+const CommentRouter = require("./routes/comment")
 const port = process.env.port
 const app = express()
 
@@ -22,6 +22,7 @@ Connector(process.env.MONGODB_URL)
 
 app.use("/", router)
 app.use("/", blogRout)
+app.use("/", CommentRouter)
 
 
 
