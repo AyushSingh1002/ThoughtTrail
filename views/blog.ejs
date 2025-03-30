@@ -185,16 +185,18 @@
             &copy; <%= new Date().getFullYear() %> Your Blog. All rights reserved. <a href="/">Back to Home</a>
         </footer>
     </div>
-    <div  id="cont" >
-        <div class="comment-form-container">
-            <h1 class="comment-form-title">Leave a Comment</h1>
-            <form class="comment-form" action="/" method="POST">
-                <input type="hidden" name="post" value="<%= blogid._id %>"/>
-                <textarea name="content" rows="4" placeholder="enter the comment here" required></textarea>
-                <button type="submit">Post Comment</button>
-            </form>
+    <% if (locals.user) { %>
+        <div  id="cont" >
+            <div class="comment-form-container">
+                <h1 class="comment-form-title">Leave a Comment</h1>
+                <form class="comment-form" action="/" method="POST">
+                    <input type="hidden" name="post" value="<%= blogid._id %>"/>
+                    <textarea name="content" rows="4" placeholder="enter the comment here" required></textarea>
+                    <button type="submit">Post Comment</button>
+                </form>
+            </div>
         </div>
-    </div>
+    <% } %>
     <div style="background-color: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin-top: 20px; width: 80%; margin-left: auto; margin-right: auto;">
         <h3 style="font-size: 1.5rem; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">Comments (<%= comment.length %>)</h3>
       
