@@ -305,7 +305,8 @@
                 <img 
                   src="<%= comment.creater.ProfilePic %>" 
                   alt="<%= comment.creater.userName %>" 
-                  style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 15px;"
+                  onclick="window.location.href='/follow/<%= comment.creater._id %>'"
+                  style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 15px; cursor: pointer;"
                 />
       
                 <!-- Comment Details -->

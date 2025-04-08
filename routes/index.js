@@ -8,6 +8,7 @@ const userSchema = require("../Model/index")
 const imagekitpk = require("../lib/imagekit")
 const {createUserToken} = require("../Services/Auth")
 const fs = require("fs")
+const { console } = require("inspector")
 
 const router = express.Router()
 
@@ -109,5 +110,29 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
     res.status(500).json({ message: "Error updating profile", error: error.message });
   }
 });
+router.get("/follow/:id", checkUserAuth, async (req, res) => {
+  try {
+      const userId = req.params.id; // Directly extract the ID from params
+      console.log("123", userId);
+      
+      // Fetch user details using the ID
+      const currentUser = await userSchema.findById(userId);
+      console.log(currentUser);
+
+      if (!currentUser) {
+          return res.status(404).send("User not found");
+      }
+
+      // Render the user page with the fetched user details
+      return res.render("userPage", {
+          curUser: currentUser,
+          user: req.user,
+      });
+  } catch (error) {
+      console.error("Error fetching user:", error);
+      return res.status(500).send("Internal Server Error");
+  }
+});
+
 
 module.exports = {router}
