@@ -29,7 +29,7 @@
             background-color: var(--background-color);
             border-radius: 12px;
             box-shadow: 0 4px 20px var(--shadow-color);
-            overflow: hidden;
+            ;
             
         }
 
@@ -53,12 +53,15 @@
         }
 
         .blog-content {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: #555;
-            text-align: justify;
-            margin-bottom: 20px;
-        }
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    text-align: justify;
+    padding: 2px;
+    margin-bottom: 20px;
+    white-space: pre-wrap; /* Preserve line breaks */
+}
+
 
         .cta-button {
             display: block;
@@ -255,7 +258,7 @@
                 font-size: 1rem;
             }
 
-            .comment-container {
+.comment-container {
                 width: 95%;
             }
             .comment-form-container {
@@ -269,11 +272,26 @@
     <%- include("./partials/navbar.ejs") %>
     
     <div class="container">
-        <h1 class="blog-title"><%= blogid.title %></h1>
+        <h1 class="blog-title"><%=  %></h1>
         <div class="image-container">
-            <img class="blog-cover" src="<%= blogid.CoverImgURL %>" alt="<%= blogid.title %> cover image" loading="lazy">
+            <img class="blog-cover" src="<%= blogid.CoverImgURL %>" alt="<%=  %> cover image" loading="lazy">
+            
+            
+           
         </div>
-        <p class="blog-content"><%= blogid.content %></p>
+        <div class="creator-info" style="display: flex; align-items: center; margin-bottom: 20px; gap: 15px; padding: 15px; background-color: var(--secondary-color); border-radius: 12px; box-shadow: 0 4px 12px var(--shadow-color);">
+            <img src="<%= blogid.createdby.ProfilePic %>" alt="<%= blogid.createdby.userName %>'s Profile Picture" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+            <div style="flex: 1;">
+                <p style="margin: 0; font-weight: bold; color: var(--text-color); font-size: 1rem;"><%= blogid.createdby.userName %></p>
+                <p style="margin: 5px 0 0; color: #888; font-size: 0.9rem;">@<%= blogid.createdby.userName %></p>
+            </div>
+            <button onclick="window.location.href='/follow/<%= blogid.createdby._id %>'" style="padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;">
+              View
+          </button>
+        </div>
+        
+        <div class="blog-content"><%= blogid.content %>
+            </div>
         <footer>
             &copy; <%= new Date().getFullYear() %> Your Blog. All rights reserved. <a href="/">Back to Home</a>
         </footer>
@@ -314,7 +332,8 @@
                   <!-- Username and Timestamp -->
                   <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span style="font-weight: bold; color: #555; font-size: 1rem;"><%= comment.creater.userName %></span>
-                    <span style="color: #888; font-size: 0.85rem;"><%= new Date(comment.createdAt).toLocaleDateString() %></span>
+
+<span style="color: #888; font-size: 0.85rem;"><%= new Date(comment.createdAt).toLocaleDateString() %></span>
                   </div>
       
                   <!-- Comment Content -->
@@ -329,7 +348,6 @@
           </div>
         <% } %>
       </div>
-      
    
 </body>
 </html>
