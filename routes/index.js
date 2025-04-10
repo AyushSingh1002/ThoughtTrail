@@ -1,7 +1,7 @@
 const checkUserAuth = require("../middleware/CookieChecker")
 const multer = require("multer")
 const path = require("path")
-const { createUser, findUser } = require("../controller")
+const { createUser, findUser, followUsers } = require("../controller")
 const blogSchema = require("../Model/blog")
 const express = require("express")
 const userSchema = require("../Model/index")
@@ -133,6 +133,7 @@ router.get("/follow/:id", checkUserAuth, async (req, res) => {
       return res.status(500).send("Internal Server Error");
   }
 });
+router.post("/follow/:id", checkUserAuth, followUsers)
 
 
 module.exports = {router}

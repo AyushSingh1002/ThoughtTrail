@@ -168,10 +168,11 @@
         font-size: 1em;
       }
 
-.btn-follow {
+      .btn-follow {
         padding: 10px 15px;
         font-size: 0.9em;
       }
+
       .container {
         margin: 10px;
       }
@@ -183,7 +184,7 @@
     <!-- Profile Section -->
     <div class="profile-section">
       <div class="profile-pic">
-        <img src="<%= curUser.ProfilePic  '/path/to/default-pic.jpg' %>" alt="Profile Picture">
+        <img src="<%= curUser.ProfilePic ? curUser.ProfilePic : '/path/to/default-pic.jpg' %>" alt="Profile Picture">
       </div>
       <div class="user-info">
         <h2><%= curUser.userName %></h2>
@@ -195,20 +196,19 @@
     <div class="bio-section">
       <h3>About Me</h3>
       <p id="bio-text">
-        <%= curUser.Bio && curUser.Bio.length > 100 
-          ? curUser.Bio.substring(0, 100) + '...' 
-          : curUser.Bio  "This user hasn't added a bio yet." %>
-        <% if (curUser.Bio && curUser.Bio.length > 100) { %>
-          <a href="#" onclick="showFullBio(event)">Read more</a>
-        <% } %>
+        <%= curUser.Bio 
+          ? (curUser.Bio.length > 100 
+              ? curUser.Bio.substring(0, 100) + '... <a href="#" onclick="showFullBio(event)">Read more</a>' 
+              : curUser.Bio)
+          : "This user hasn't added a bio yet." %>
       </p>
     </div>
 
     <!-- Follow Button -->
-    <% if (String(curUser._id) !== String(user._id)) { %>
+    <% if (curUser._id.toString() !== user._id.toString()) { %>
       <form action="/follow/<%= curUser._id %>" method="POST">
         <button type="submit" class="btn-follow">
-          <% if ( curUser.followers.includes(user._id) ) { %>
+          <% if (curUser.followers.includes(user._id)) { %>
             Unfollow
           <% } else { %>
             Follow
@@ -216,18 +216,17 @@
         </button>
       </form>
     <% } %>
-    
 
     <!-- Footer -->
     <div class="footer">
       <p>Want to see more? <a href="/explore">Explore other profiles</a></p>
     </div>
   </div>
-</body>
-<script>
+  <script>
     function showFullBio(event) {
       event.preventDefault();
-      document.getElementById('bio-text').innerHTML = "<%= curUser.Bio %>";
+      document.getElementById('bio-text').innerHTML = `<%- curUser.Bio %>`;
     }
-</script>
+  </script>
+</body>
 </html>
