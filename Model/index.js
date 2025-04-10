@@ -28,7 +28,15 @@ const userSchema = new mongoose.Schema({
   ProfilePic: {
     type : String,
   default : "https://th.bing.com/th/id/OIP.5RYq7OxqpuRcYHUn66mQmQHaHa?w=201&h=201&c=7&r=0&o=5&dpr=1.1&pid=1.7",
-  }
+  },
+  followers: {
+    type: [String],
+    default: [],
+  },
+  following: {
+    type: [String],
+    default: [],
+  },
 }
 ,
   {timestamps: true});

@@ -23,7 +23,12 @@ const blogSchema = new mongoose.Schema({
   createdby: {
     type: Schema.Types.ObjectId,
     ref: "User",
-  }
+  },
+  likes: {
+    type: [Schema.Types.ObjectId],
+    ref: "User",
+    default: [],
+  },
 }
 ,
   {timestamps: true});

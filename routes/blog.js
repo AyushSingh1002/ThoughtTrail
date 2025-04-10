@@ -24,7 +24,7 @@ router.get("/blog",checkUserAuth, (req,res) => res.render("addblogs",{
 router.post("/blog",upload.single('coverImg'), createBlog)
 
 router.get("/blog/:id",checkUserAuth,async(req,res)=>{
-  const blog = await blogSchema.findById(req.params.id)
+  const blog = await blogSchema.findById(req.params.id).populate("createdby")
   const comment = await Comment.find({onPost: req.params.id}).populate('creater')
     return res.render("blog",{
       blogid : blog,
