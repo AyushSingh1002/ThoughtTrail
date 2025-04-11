@@ -113,7 +113,10 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
 router.get("/follow/:id", checkUserAuth, async (req, res) => {
   try {
       const userId = req.params.id; // Directly extract the ID from params
-      console.log("123", userId);
+      
+      if (!userId) {
+          return res.status(400).res.redirect("/login");
+      }
       
       // Fetch user details using the ID
       const currentUser = await userSchema.findById(userId);

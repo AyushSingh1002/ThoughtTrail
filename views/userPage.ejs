@@ -205,6 +205,7 @@
     </div>
 
     <!-- Follow Button -->
+    <% if (locals.user) { %>
     <% if (curUser._id.toString() !== user._id.toString()) { %>
       <form action="/follow/<%= curUser._id %>" method="POST">
         <button type="submit" class="btn-follow">
@@ -216,10 +217,12 @@
         </button>
       </form>
     <% } %>
+    <% } %>
+
 
     <!-- Footer -->
     <div class="footer">
-      <p>Want to see more? <a href="/explore">Explore other profiles</a></p>
+      <p>Want to see more? <a href="/">Explore other profiles</a></p>
     </div>
   </div>
   <script>

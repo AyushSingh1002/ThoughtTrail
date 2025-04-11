@@ -24,7 +24,7 @@
 
         .container {
             max-width: 900px;
-            margin: 40px auto;
+            margin: 60px auto;
             padding: 20px;
             background-color: var(--background-color);
             border-radius: 12px;
@@ -36,7 +36,7 @@
         .blog-title {
             font-size: 2.5rem;
             font-weight: bold;
-            color: var(--primary-color);
+            color: var(--text-color);
             margin-bottom: 20px;
             text-align: center;
             line-height: 1.4;
@@ -247,7 +247,7 @@
             }
 
             .blog-title {
-                font-size: 2rem;
+                font-size: 1.5rem;
             }
 
             .blog-cover {
@@ -272,22 +272,43 @@
     <%- include("./partials/navbar.ejs") %>
     
     <div class="container">
-        <h1 class="blog-title"><%=  %></h1>
+        <h1 class="blog-title"><%= blogid.title %></h1>
         <div class="image-container">
-            <img class="blog-cover" src="<%= blogid.CoverImgURL %>" alt="<%=  %> cover image" loading="lazy">
+            <img class="blog-cover" src="<%= blogid.CoverImgURL %>" alt="<%= blogid.title %> cover image" loading="lazy">
             
             
            
         </div>
-        <div class="creator-info" style="display: flex; align-items: center; margin-bottom: 20px; gap: 15px; padding: 15px; background-color: var(--secondary-color); border-radius: 12px; box-shadow: 0 4px 12px var(--shadow-color);">
-            <img src="<%= blogid.createdby.ProfilePic %>" alt="<%= blogid.createdby.userName %>'s Profile Picture" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+        <div class="creator-info" style="display: flex; align-items: center; margin-bottom: 20px; gap: 15px; padding: 15px; background-color: var(--secondary-color); border-radius: 12px; box-shadow: 0 4px 12px var(--shadow-color); width: full;">
+            <img onclick="window.location.href='/follow/<%= blogid.createdby._id %>'" src="<%= blogid.createdby.ProfilePic %>" alt="<%= blogid.createdby.userName %>'s Profile Picture" style="cursor: pointer; width: 50px; height: 50px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
             <div style="flex: 1;">
                 <p style="margin: 0; font-weight: bold; color: var(--text-color); font-size: 1rem;"><%= blogid.createdby.userName %></p>
                 <p style="margin: 5px 0 0; color: #888; font-size: 0.9rem;">@<%= blogid.createdby.userName %></p>
             </div>
-            <button onclick="window.location.href='/follow/<%= blogid.createdby._id %>'" style="padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;">
-              View
-          </button>
+            
+           <% if (locals.user) { %>
+            <% if (blogid.createdby._id.toString() === user._id.toString()) { %>
+                <button onclick="window.location.href='/profile/<%= blogid.createdby._id %>'" style="padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;">
+                    Profile
+                 </button>
+               <% } else { %>
+                <form method="POST" action="/follow/<%= blogid.createdby._id %>">
+                    <button type="submit" style="padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;">
+                        <% if (blogid.createdby.followers.includes(user._id.toString())) { %>
+                         Unfollow
+                        <% } else { %>
+                         Follow
+                        <% } %>
+                     </button>
+                </form>
+                  <% } %>
+                  <% } else { %>
+                    <button onclick="window.location.href='/login'" style="padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;">
+                        Follow
+                     </button>
+                    <% } %>
+                  
+           
         </div>
         
         <div class="blog-content"><%= blogid.content %>

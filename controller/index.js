@@ -44,7 +44,7 @@ async function createUser(req,res) {
             await user.save();
             await currentUser.save();
 
-            return res.status(200).redirect(`/follow/${userId}`);
+            return res.status(200).redirect("back");
             
         } catch (error) {
             console.log("error", error)
