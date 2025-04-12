@@ -64,6 +64,7 @@
       color: var(--text-white);
       text-decoration: none;
       background: linear-gradient(90deg, var(--text-white), var(--accent));
+      -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       transition: var(--transition);
     }
@@ -337,7 +338,7 @@
 
       .nav-links li {
         width: 100%;
-        background: rgba(0, 0, 0, 0.); /* darker + 80% opacity */
+        background: rgba(0, 0, 0, 0.3); /* darker + 80% opacity */
   backdrop-filter: blur(20px); /* nice blur effect */
   -webkit-backdrop-filter: blur(20px); /* Safari support */
 
