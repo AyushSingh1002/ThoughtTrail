@@ -1,249 +1,531 @@
-=<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Blog Post</title>
+    <title><%= blogid.title %> - Modern Blog</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #4CAF50;
-            --secondary-color: #f9f9f9;
-            --text-color: #333;
-            --background-color: #fff;
-            --shadow-color: rgba(0, 0, 0, 0.15);
+            --primary-color: #6366f1;
+            --secondary-color: #1e1e1e;
+            --text-color: #e0e0e0;
+            --text-secondary: #888;
+            --background-color: #0a0f1a;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --input-bg: #2a2a2a;
+            --input-focus: #333333;
+            --alert-color: #e57373;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--secondary-color);
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background-color);
             color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            
+        }
+
+        /* Particle Background */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        .container-all {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            background-color: #0a0f1a;
+            flex-direction: column;
+            align-items: center;
         }
 
         .container {
             max-width: 900px;
-            margin: 60px auto;
-            padding: 20px;
-            background-color: var(--background-color);
-            border-radius: 12px;
+            width: 100%;
+            background: var(--secondary-color);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 48px auto;
             box-shadow: 0 4px 20px var(--shadow-color);
-            ;
-            
+            border: 1px solid var(--border-color);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .container:hover {
+            box-shadow: 0 8px 32px var(--shadow-color);
         }
 
         .blog-title {
             font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--text-color);
-            margin-bottom: 20px;
+            font-weight: 700;
             text-align: center;
+            margin-bottom: 24px;
             line-height: 1.4;
-        }
-
-        .blog-cover {
-            align-content: center;
-            width: 40%;
-            height: auto;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            object-fit: cover;
-            box-shadow: 0 4px 12px var(--shadow-color);
-        }
-
-        .blog-content {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: #555;
-    text-align: justify;
-    padding: 2px;
-    margin-bottom: 20px;
-    white-space: pre-wrap; /* Preserve line breaks */
-}
-
-
-        .cta-button {
-            display: block;
-            width: 100%;
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .cta-button a {
-            background-color: var(--primary-color);
-            color: #fff;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
-
-        .cta-button a:hover {
-            background-color: #388E3C;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            font-size: 0.9rem;
-            color: #777;
-        }
-
-        footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        .alert {
-            max-width: 900px;
-            margin: 20px auto;
-            padding: 15px;
-            border-radius: 8px;
-            color: #fff;
-            background-color: #e57373;
-            text-align: center;
-            box-shadow: 0 2px 10px var(--shadow-color);
-        }
-        .comment-form-container {
-            width: 100%;
-            background-color: #fff;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 20px var(--shadow-color);
+            background: linear-gradient(90deg, var(--text-color), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .image-container {
             display: flex;
             justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .blog-cover {
+            width: 50%;
+            max-height: 470px;
+            object-fit: cover;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            transition: transform 0.5s ease;
+        }
+
+        .blog-cover:hover {
+            transform: scale(1.03);
+        }
+
+        .creator-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px;
+            background: var(--secondary-color);
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .creator-info:hover {
+            box-shadow: 0 8px 24px var(--shadow-color);
+        }
+
+        .creator-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px var(--shadow-color);
+            transition: transform 0.3s ease;
+        }
+
+        .creator-info img:hover {
+            transform: scale(1.1);
+        }
+
+        .creator-info .info-text {
+            flex: 1;
+        }
+
+        .creator-info .username {
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .creator-info .handle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin: 5px 0 0;
+        }
+
+        .creator-info button {
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+
+        .creator-info button:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--shadow-color);
+        }
+
+        .creator-info button:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        .blog-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            text-align: justify;
+            margin-bottom: 24px;
+            white-space: pre-wrap;
+        }
+
+        .blog-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--secondary-color);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .like-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--input-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .like-button.liked i {
+            color: var(--alert-color);
+            animation: heartPop 0.3s ease;
+        }
+
+        .like-button:hover {
+            background: var(--input-focus);
+        }
+
+        .share-button {
+            position: sticky;
+            bottom: 20px;
+            right: 20px;
+            float: right;
+            padding: 12px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 3px 6px var(--shadow-color);
+            transition: var(--transition);
+        }
+
+        .share-button:hover {
+            background: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .share-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
         }
 
-        .comment-form-title {
-            font-size: 1.8rem;
-            color: var(--primary-color);
+        .share-modal-content {
+            background: var(--secondary-color);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
             text-align: center;
-            margin-bottom: 20px;
-            font-weight: bold;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            animation: slideIn 0.3s ease;
         }
-        
-        /* Container */
-.comment-form-container {
-    width: 80%;
-    margin: 20px auto;
-    padding: 15px;
-    background: #f9fafb;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    font-family: 'Poppins', sans-serif;
-}
 
-/* Row Layout */
-.comment-form-row {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    width: 100%;
-}
-
-/* Avatar */
-.user-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #e5e7eb;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
-}
-
-.user-avatar:hover {
-    transform: scale(1.1);
-}
-
-/* Text Area */
-.comment-form textarea {
-    flex: 1;
-    padding: 12px 15px;
-    font-size: 1em;
-    border: 1px solid #e5e7eb;
-    border-radius: 20px;
-    background-color: #f3f4f6;
-    outline: none;
-    resize: none;
-    transition: box-shadow 0.3s ease, background-color 0.3s ease;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.comment-form textarea:focus {
-    background-color: #ffffff;
-    border-color: #6366f1;
-    box-shadow: 0 0 5px rgba(99, 102, 241, 0.3);
-}
-
-/* Icon Button */
-.comment-form button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 45px;
-    height: 45px;
-    background-color: #6366f1;
-    color: #ffffff;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 3px 6px rgba(99, 102, 241, 0.4);
-    font-size: 1.2em; /* Icon Size */
-}
-
-.comment-form button:hover {
-    background-color: #4f46e5;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(79, 70, 229, 0.4);
-}
-
-/* Responsive Adjustments */
-@media (max-width: 600px) {
-    .comment-form-row {
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    .comment-form textarea {
-        width: calc(100% - 80px); /* Adjust to avatar and button width */
-    }
-
-    .comment-form button {
-        flex: none;
-    }
-    
-}
-
-        
-        #cont{
-           width: 100%;
-           display: flex;
-           justify-content: center;
+        .share-modal-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            color: var(--text-color);
         }
+
+        .share-links {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .share-links a {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .share-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .share-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .share-close:hover {
+            color: var(--primary-color);
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            margin-top: 32px;
+        }
+
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        footer a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        .comment-form-container {
+            width: 80%;
+            max-width: 900px;
+            background: var(--secondary-color);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 24px auto;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            animation: fadeInUp 0.6s ease-out 0.2s backwards;
+        }
+
+        .comment-form-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px var(--shadow-color);
+            transition: transform 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .comment-form textarea {
+            flex: 1;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            outline: none;
+            resize: none;
+            transition: var(--transition);
+            box-shadow: inset 0 1px 3px var(--shadow-color);
+        }
+
+        .comment-form textarea:focus {
+            background: var(--input-focus);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(99, 102, 241, 0.3);
+        }
+
+        .comment-form button {
+            width: 45px;
+            height: 45px;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 6px var(--shadow-color);
+            transition: var(--transition);
+        }
+
+        .comment-form button:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--shadow-color);
+        }
+
+        #cont {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
         .comment-container {
             width: 80%;
-            background-color: #fff;
-            border-radius: 12px;
+            max-width: 900px;
+            background: var(--secondary-color);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
             padding: 20px;
+            margin: 24px auto;
             box-shadow: 0 4px 20px var(--shadow-color);
-            margin-top: 20px;
+            border: 1px solid var(--border-color);
+            animation: fadeInUp 0.6s ease-out 0.4s backwards;
         }
-        @media screen and (max-width: 768px) {
-            .container {
+
+        .comment-container h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .comment-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .comment-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.3s ease;
+        }
+
+        .comment-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .comment-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+        }
+
+        .comment-item img:hover {
+            transform: scale(1.1);
+        }
+
+        .comment-details {
+            flex: 1;
+        }
+
+        .comment-details .username {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .comment-details .date {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-left: 12px;
+        }
+
+        .comment-details p {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            line-height: 1.5;
+            margin: 8px 0 0;
+        }
+
+        .no-comments {
+            background: var(--input-bg);
+            color: var(--text-color);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 4px;
+            background: var(--primary-color);
+            z-index: 1000;
+            transition: width 0.2s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes heartPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+          
+
+            .container, .comment-form-container, .comment-container {
+                width: 95%;
                 padding: 15px;
+                margin: 24px auto;
             }
 
             .blog-title {
@@ -251,124 +533,335 @@
             }
 
             .blog-cover {
-                width: 50%;
+                width: 80%;
+                max-height: 350px;
             }
+
+            .creator-info {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+           
 
             .blog-content {
                 font-size: 1rem;
             }
 
-.comment-container {
-                width: 95%;
+            .comment-form-row {
+                flex-wrap: wrap;
+                gap: 10px;
             }
-            .comment-form-container {
-        width: 95%;
-    }
-            
+
+            .comment-form textarea {
+                width: 100%;
+            }
+
+            .share-button {
+                bottom: 16px;
+                right: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .blog-title {
+                font-size: 1.25rem;
+            }
+
+            .creator-info img {
+                width: 40px;
+                height: 40px;
+            }
+
+            .creator-info button {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+
+            .blog-content {
+                font-size: 0.95rem;
+            }
+
+            .comment-form-container, .comment-container {
+                padding: 12px;
+            }
+
+            .comment-item img {
+                width: 40px;
+                height: 40px;
+            }
+
+            .comment-details .username {
+                font-size: 0.9rem;
+            }
+
+            .comment-details .date {
+                font-size: 0.75rem;
+            }
+
+            .comment-details p {
+                font-size: 0.85rem;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="progress-bar" id="progressBar"></div>
+    <canvas id="particles"></canvas>
     <%- include("./partials/navbar.ejs") %>
     
-    <div class="container">
-        <h1 class="blog-title"><%= blogid.title %></h1>
-        <div class="image-container">
-            <img class="blog-cover" src="<%= blogid.CoverImgURL %>" alt="<%= blogid.title %> cover image" loading="lazy">
-            
-            
-           
-        </div>
-        <div class="creator-info" style="display: flex; align-items: center; margin-bottom: 20px; gap: 15px; padding: 15px; background-color: var(--secondary-color); border-radius: 12px; box-shadow: 0 4px 12px var(--shadow-color); width: full;">
-            <img onclick="window.location.href='/follow/<%= blogid.createdby._id %>'" src="<%= blogid.createdby.ProfilePic %>" alt="<%= blogid.createdby.userName %>'s Profile Picture" style="cursor: pointer; width: 50px; height: 50px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
-            <div style="flex: 1;">
-                <p style="margin: 0; font-weight: bold; color: var(--text-color); font-size: 1rem;"><%= blogid.createdby.userName %></p>
-                <p style="margin: 5px 0 0; color: #888; font-size: 0.9rem;">@<%= blogid.createdby.userName %></p>
+    <div class="container-all">
+        <div class="container">
+            <h1 class="blog-title"><%= blogid.title %></h1>
+            <div class="image-container">
+                <img class="blog-cover" src="<%= blogid.CoverImgURL %>" alt="<%= blogid.title %> cover image" loading="lazy">
             </div>
-            
-           <% if (locals.user) { %>
-            <% if (blogid.createdby._id.toString() === user._id.toString()) { %>
-                <button onclick="window.location.href='/profile/<%= blogid.createdby._id %>'" style="padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;">
-                    Profile
-                 </button>
-               <% } else { %>
-                <form method="POST" action="/follow/<%= blogid.createdby._id %>">
-                    <button type="submit" style="padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;">
-                        <% if (blogid.createdby.followers.includes(user._id.toString())) { %>
-                         Unfollow
-                        <% } else { %>
-                         Follow
-                        <% } %>
-                     </button>
-                </form>
-                  <% } %>
-                  <% } else { %>
-                    <button onclick="window.location.href='/login'" style="padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;">
-                        Follow
-                     </button>
-                    <% } %>
-                  
-           
-        </div>
-        
-        <div class="blog-content"><%= blogid.content %>
-            </div>
-        <footer>
-            &copy; <%= new Date().getFullYear() %> Your Blog. All rights reserved. <a href="/">Back to Home</a>
-        </footer>
-    </div>
-    <% if (locals.user) { %>
-        <div  id="cont" >
-            <div class="comment-form-container">
-                <form class="comment-form" action="/" method="POST">
-                    <input type="hidden" name="post" value="<%= blogid._id %>" />
-                    <div class="comment-form-row">
-                        <img class="user-avatar" src="<%= user.ProfilePic %>" alt="User Avatar" />
-                        <textarea name="content" rows="1" placeholder="Write a comment..." required></textarea>
-                        <button type="submit" aria-label="Post Comment">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
-                </form>
-            </div>            
-            </div>
-    <% } %>
-    <div class="comment-container" style="background-color: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin-top: 20px; margin-left: auto; margin-right: auto;">
-        <h3 style="font-size: 1.5rem; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">Comments (<%= comment.length %>)</h3>
-      
-        <% if (comment.length > 0) { %>
-          <ul style="list-style: none; padding: 0; margin: 0;">
-            <% comment.forEach(comment => { %>
-              <li style="display: flex; align-items: flex-start; padding: 15px 0; border-bottom: 1px solid #eee;">
-                <!-- Profile Picture -->
-                <img 
-                  src="<%= comment.creater.ProfilePic %>" 
-                  alt="<%= comment.creater.userName %>" 
-                  onclick="window.location.href='/follow/<%= comment.creater._id %>'"
-                  style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 15px; cursor: pointer;"
-                />
-      
-                <!-- Comment Details -->
-                <div style="flex: 1;">
-                  <!-- Username and Timestamp -->
-                  <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-weight: bold; color: #555; font-size: 1rem;"><%= comment.creater.userName %></span>
-
-<span style="color: #888; font-size: 0.85rem;"><%= new Date(comment.createdAt).toLocaleDateString() %></span>
-                  </div>
-      
-                  <!-- Comment Content -->
-                  <p style="margin: 8px 0 0; color: #444; font-size: 0.95rem; line-height: 1.5;"><%= comment.content %></p>
+            <div class="creator-info">
+                <img onclick="window.location.href='/follow/<%= blogid.createdby._id %>'" src="<%= blogid.createdby.ProfilePic %>" alt="<%= blogid.createdby.userName %>'s Profile Picture" loading="lazy">
+                <div class="info-text">
+                    <p class="username"><%= blogid.createdby.userName %></p>
+                    <p class="handle">@<%= blogid.createdby.userName %></p>
                 </div>
-              </li>
-            <% }); %>
-          </ul>
-        <% } else { %>
-          <div style="background-color: #f9f9f9; color: #555; padding: 20px; border-radius: 8px; text-align: center;">
-            No comments available. Be the first to comment!
-          </div>
+                <% if (locals.user) { %>
+                    <% if (blogid.createdby._id.toString() === user._id.toString()) { %>
+                        <button onclick="window.location.href='/profile/<%= blogid.createdby._id %>'" aria-label="View Profile">Profile</button>
+                    <% } else { %>
+                        <form method="POST" action="/follow/<%= blogid.createdby._id %>" onsubmit="handleFollow(event, this)">
+                            <button type="submit" aria-label="<%= blogid.createdby.followers.includes(user._id.toString()) ? 'Unfollow' : 'Follow' %>">
+                                <%= blogid.createdby.followers.includes(user._id.toString()) ? 'Unfollow' : 'Follow' %>
+                            </button>
+                        </form>
+                    <% } %>
+                <% } else { %>
+                    <button onclick="window.location.href='/login'" aria-label="Follow">Follow</button>
+                <% } %>
+            </div>
+            <div class="blog-content"><%= blogid.content %></div>
+            <div class="blog-actions">
+                <form method="post" action="/blog/<%= blogid._id %>">
+                    <button class="like-button" onclick="toggleLike(this)"aria-label="Like Post">
+                        <i class="fas fa-heart"></i> <span class="like-count"><%= blogid.likes.length %></span> Likes
+                    </button>
+                </form>
+            </div>
+            <button class="share-button" onclick="openShareModal()" aria-label="Share Post">
+                <i class="fas fa-share"></i>
+            </button>
+            <footer>
+                © <%= new Date().getFullYear() %> Your Blog. All rights reserved. <a href="/">Back to Home</a>
+            </footer>
+        </div>
+
+        <!-- Share Modal -->
+        <div class="share-modal" id="shareModal">
+            <div class="share-modal-content">
+                <span class="share-close" onclick="closeShareModal()" aria-label="Close">×</span>
+                <h3>Share this Post</h3>
+                <div class="share-links">
+                    <a href="#" onclick="share('twitter')" aria-label="Share on Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" onclick="share('facebook')" aria-label="Share on Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" onclick="share('linkedin')" aria-label="Share on LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" onclick="copyLink()" aria-label="Copy Link"><i class="fas fa-link"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <% if (locals.user) { %>
+            <div id="cont">
+                <div class="comment-form-container">
+                    <form class="comment-form" action="/" method="POST" onsubmit="handleComment(event, this)">
+                        <input type="hidden" name="post" value="<%= blogid._id %>" />
+                        <div class="comment-form-row">
+                            <img class="user-avatar" src="<%= user.ProfilePic %>" alt="User Avatar" loading="lazy">
+                            <textarea name="content" rows="3" placeholder="Write a comment..." required></textarea>
+                            <button type="submit" aria-label="Post Comment">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         <% } %>
-      </div>
-   
+
+        <div class="comment-container">
+            <h3>Comments (<%= comment.length %>)</h3>
+            <% if (comment.length > 0) { %>
+                <ul class="comment-list">
+                    <% comment.forEach(comment => { %>
+                        <li class="comment-item">
+                            <img 
+                                src="<%= comment.creater.ProfilePic %>" 
+                                alt="<%= comment.creater.userName %>'s Profile Picture" 
+                                onclick="window.location.href='/follow/<%= comment.creater._id %>'" 
+                                loading="lazy">
+                            <div class="comment-details">
+                                <div>
+                                    <span class="username"><%= comment.creater.userName %></span>
+                                    <span class="date"><%= new Date(comment.createdAt).toLocaleDateString() %></span>
+                                </div>
+                                <p><%= comment.content %></p>
+                            </div>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <div class="no-comments">No comments available. Be the first to comment!</div>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+        // Particle Background
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 50;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.size > 0.2) this.size -= 0.01;
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+
+            draw() {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((particle, i) => {
+                particle.update();
+                particle.draw();
+                if (particle.size <= 0.2) {
+                    particles.splice(i, 1);
+                    particles.push(new Particle());
+                }
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Reading Progress Bar
+        function updateProgressBar() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        window.addEventListener('scroll', updateProgressBar);
+
+        // Like Button
+        function toggleLike(button) {
+            button.classList.toggle('liked');
+            const countEl = button.querySelector('.like-count');
+            let count = parseInt(countEl.textContent);
+            countEl.textContent = button.classList.contains('liked') ? count + 1 : count - 1;
+        }
+
+        // Share Modal
+        function openShareModal() {
+            document.getElementById('shareModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function share(platform) {
+            const url = window.location.href;
+            const title = '<%= blogid.title %>';
+            let shareUrl;
+            switch (platform) {
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
+                    break;
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+                    break;
+                case 'linkedin':
+                    shareUrl = `https://www.linkedin.com/shareArticle?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`;
+                    break;
+            }
+            window.open(shareUrl, '_blank');
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Link copied to clipboard!');
+            });
+        }
+
+        // Follow Button Loading State
+        function handleFollow(event, form) {
+            event.preventDefault();
+            const button = form.querySelector('button');
+            button.disabled = true;
+            button.style.opacity = '0.6';
+            setTimeout(() => {
+                form.submit();
+            }, 1000);
+        }
+
+        // Comment Submission
+        function handleComment(event, form) {
+            event.preventDefault();
+            const button = form.querySelector('button');
+            button.disabled = true;
+            button.style.opacity = '0.6';
+            setTimeout(() => {
+                form.submit();
+            }, 1000);
+        }
+
+        // Scroll Animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.container, .comment-form-container, .comment-container').forEach(el => {
+            el.style.opacity = 0;
+            el.style.transform = 'translateY(20px)';
+            observer.observe(el);
+        });
+    </script>
 </body>
 </html>

@@ -4,33 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-</head>
-<style>
-    body{
-      height: 100vh;
-            background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
-            font-family: Arial, sans-serif;
-            margin-top: 3.125rem;
-            padding: 0;
-            color: #fff;
-            
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Poppins', 'Arial', sans-serif;
+      background-color: #0a0f1a; /* dark blue background */
+      color: #f1f5f9; /* light text */
+      padding-top: 1rem;
+    }
 
-        }
+    .grid-container {
+      margin: 1rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 2rem;
+      padding: 4rem;
+      justify-content: center;
+    }
 
-        .grid-container {
-            margin: 1rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-            gap: 2rem;
-            padding: 4rem;
-            justify-content: center;
-        }
-
-        .card {
-            cursor:grabbing;
-            background-color: #fff;
-            color: #000;
-            border-radius: 8px;
+    .card {
+      cursor: grabbing;
+      background-color: #1f2937; /* darker card */
+      color: #f1f5f9;
+      border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             display: flex;
@@ -38,77 +35,87 @@
             height: auto;
             width: auto;
             transition: transform 0.3s, box-shadow 0.3s;
-        }
+    }
 
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-        }
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 24px rgba(30, 64, 175, 0.7); /* blue glow on hover */
+    }
 
-        .card img {
-            width: 100%;
-            height: 250px;
-            object-fit: contain;
-        }
+    .card img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      object-position: middle;
+      background-color: #0f172a; /* fallback bg for images */
+    }
 
-        .card-body {
-            padding: 0.60rem;
+    .card-body {
+        padding: 0.60rem;
             text-align: center;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             flex-grow: 1;
-        }
+    }
 
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin: 0.5rem 0;
-        }
+    .card-title {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin: 0.5rem 0;
+      color: #ffffff;
+    }
 
-        .card-text {
-            font-size: 0.9rem;
-            color: #555;
-            margin: 0.5rem 0;
-        }
+    .card-text {
+      font-size: 1rem;
+      color: #cbd5e1;
+      margin: 0.5rem 0;
+    }
 
-        .btn {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            margin-top: .5rem;
-            padding: 0.5rem;
-            border-radius: 16px;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+    .btn {
+      background-color: #f97316; /* orange button */
+      color: #ffffff;
+      border: none;
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 9999px; /* fully rounded button */
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
 
-        .btn:hover {
-            background-color: #0056b3;
-        }
-</style>
+    .btn:hover {
+      background-color: #fb923c; /* lighter orange on hover */
+      transform: translateY(-2px);
+    }
+
+    .container {
+      width: 100%;
+      min-height: 100vh;
+      background-color: #0a0f1a;
+      padding-bottom: 4rem;
+    }
+  </style>
+</head>
+
 <body>
-    <%- include("./partials/navbar.ejs") %>
-  <%= locals.userInfo %>
-  <main class="grid-container">
-    <% blogs.forEach(blog => { %>
+  <%- include("./partials/navbar.ejs") %>
+
+  <div class="container">
+    <main class="grid-container">
+      <% blogs.forEach(blog => { %>
         <div class="card">
-            <img src="<%= blog.CoverImgURL %>" alt="<%= blog.title %> cover image">
-            <div class="card-body">
-              <h5 class="card-title"><%= blog.title.toUpperCase() %></h5>
-              <p style="text-align: center; opacity: .7;">  <%= blog.content.substring(0, 70) + "..." %></p>
-                
-                <a href="/blog/<%= blog._id %>" class="btn">Read</a>
-            </div>
+          <img src="<%= blog.CoverImgURL %>" alt="<%= blog.title %> cover image">
+          <div class="card-body">
+            <h5 class="card-title"><%= blog.title.toUpperCase() %></h5>
+            <p class="card-text"><%= blog.content.substring(0, 70) + "..." %></p>
+            <a href="/blog/<%= blog._id %>" class="btn">Read</a>
+          </div>
         </div>
-    <% }) %>
-</main>
+      <% }) %>
+    </main>
+  </div>
 </body>
 </html>
-
-
-
-  

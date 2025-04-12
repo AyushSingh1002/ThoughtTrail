@@ -4,192 +4,686 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* General Styles */
-    main {
-      font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
+    :root {
+      --bg-body: #121212;
+      --bg-main: #0a0f1a;
+      --bg-container: #1e1e1e;
+      --bg-input: #2c2c2c;
+      --border-input: #333;
+      --bg-pencil: #333;
+      --border-image: #555;
+      --text-primary: #e0e0e0;
+      --text-label: #bbbbbb;
+      --text-readonly: #999;
+      --text-white: #fff;
+      --button-bg: #4f46e5;
+      --button-hover: #4338ca;
+      --alert-color: #e57373;
+      --success-color: #4ade80;
+      --accent-glow: rgba(79, 70, 229, 0.3);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.5);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Dynamic Background */
+    main {
+      background: linear-gradient(135deg, var(--bg-main) 60%, rgba(79, 70, 229, 0.1));
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
+      padding: 20px 16px;
+      position: relative;
+    }
+
+    /* Particle Background */
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.12;
+    }
+    #profile-pic {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid var(--border-image);
+      object-fit: cover;
     }
 
     .container {
-      width: 90%;
+      width: 100%;
       max-width: 500px;
+      background: var(--bg-container);
+      backdrop-filter: blur(10px);
+      padding: 28px;
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--accent-glow);
+      animation: fadeInUp 0.6s ease-out;
       margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
     }
-    #profile-pic{
-      background-size: cover;
+
+    .container:hover {
+      box-shadow: 0 8px 32px var(--accent-glow);
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--button-bg), var(--button-hover));
+      opacity: 0.8;
     }
 
     h1 {
       text-align: center;
-      color: #333;
-      margin-bottom: 20px;
+      color: var(--text-white);
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      background: linear-gradient(90deg, var(--text-white), var(--button-bg));
+      -webkit-text-fill-color: transparent;
+      position: relative;
+    }
+
+    h1::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 2px;
+      background: var(--button-bg);
+      margin: 8px auto;
+      border-radius: 2px;
     }
 
     .profile-form {
       display: flex;
       flex-direction: column;
+      gap: 14px;
     }
 
     .form-group {
-      margin-bottom: 15px;
+      margin-bottom: 18px;
+      position: relative;
     }
 
     label {
       display: block;
-      font-weight: bold;
-      color: #555;
-      margin-bottom: 5px;
+      font-weight: 500;
+      color: var(--text-label);
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      transition: var(--transition);
+      transform-origin: left;
+    }
+
+    .form-group:hover label {
+      color: var(--text-white);
+      transform: translateY(-2px);
     }
 
     input[type="text"],
     input[type="email"],
-    textarea,
-    input[type="file"] {
+    textarea {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 16px;
-      box-sizing: border-box;
+      padding: 10px 14px;
+      border: 1px solid var(--border-input);
+      border-radius: 6px;
+      background: var(--bg-input);
+      color: var(--text-white);
+      font-size: 0.95rem;
+      font-family: 'Poppins', sans-serif;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    input[type="email"]:read-only {
+      background: var(--bg-input);
+      color: var(--text-readonly);
+      cursor: not-allowed;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--button-bg);
+      box-shadow: 0 0 6px var(--accent-glow);
+      outline: none;
+    }
+
+    input:not(:placeholder-shown),
+    textarea:not(:placeholder-shown) {
+      border-color: var(--button-bg);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-readonly);
+      opacity: 0.7;
+      transition: var(--transition);
+    }
+
+    input:focus::placeholder,
+    textarea:focus::placeholder {
+      opacity: 0;
     }
 
     textarea {
       resize: none;
+      height: 90px;
+    }
+
+    input[type="file"] {
+      display: none;
     }
 
     .profile-preview {
-      margin-top: 10px;
       display: flex;
       justify-content: center;
+      margin-bottom: 18px;
     }
 
-    .imgContainer {
+    .img-container {
       position: relative;
-      display: inline-block;
-      width: 180px;
-      height: 180px;
+      width: 120px;
+      height: 120px;
+      animation: pulseRing 2s infinite ease-in-out;
     }
 
-    .imgContainer img {
-      width: 90%;
-      height: 90%;
+    .img-container::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      border: 2px solid var(--button-bg);
       border-radius: 50%;
-      border: 2px solid rgb(0, 0, 0);
+      opacity: 0.3;
+      animation: pulseRing 2s infinite ease-in-out;
+    }
+
+    .img-container img.profile-pic {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid var(--border-image);
+      object-fit: cover;
+      transition: var(--transition);
+    }
+
+    .img-container:hover img.profile-pic {
+      transform: scale(1.05);
+      border-color: var(--button-bg);
     }
 
     .pensil-icon {
       position: absolute;
-      bottom: 10px;
-      right: 10px;
-      background-color: white;
+      bottom: 6px;
+      right: 6px;
+      background: var(--bg-pencil);
       border-radius: 50%;
-      padding: 0;
+      padding: 6px;
       display: flex;
       justify-content: center;
       align-items: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
     }
 
-    .pensil-icon img {
-      width: 30px;
-      height: 30px;
+    .pensil-icon:hover {
+      background: var(--button-bg);
+      transform: scale(1.1);
+    }
+
+    .pensil-icon i {
+      color: var(--text-white);
+      font-size: 1rem;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 12px;
     }
 
     .btn {
-      background-color: #007bff;
-      color: #fff;
-      padding: 10px;
+      flex: 1;
+      background: linear-gradient(90deg, var(--button-bg), var(--button-hover));
+      color: var(--text-white);
+      padding: 10px 20px;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 500;
       cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
     }
 
     .btn:hover {
-      background-color: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--accent-glow);
     }
 
-    .mix {
-      text-align: center;
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease, height 0.6s ease;
+    }
+
+    .btn:hover::before {
+      width: 200px;
+      height: 200px;
+    }
+
+    .btn.cancel {
+      background: var(--bg-input);
+      color: var(--text-label);
+    }
+
+    .btn.cancel:hover {
+      background: var(--border-input);
+      color: var(--text-white);
+      box-shadow: 0 4px 12px var(--shadow-sm);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .bio-counter {
+      text-align: right;
+      font-size: 0.8rem;
+      color: var(--text-label);
+      margin-top: 4px;
+      transition: var(--transition);
+    }
+
+    .bio-counter.warning {
+      color: var(--alert-color);
+    }
+
+    .error-message {
+      color: var(--alert-color);
+      font-size: 0.8rem;
+      margin-top: 4px;
+      display: none;
+      animation: slideIn 0.3s ease;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--success-color);
+      color: var(--text-white);
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: var(--shadow-sm);
+      display: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+      border-left: 4px solid var(--button-bg);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateX(20px); }
+    }
+
+    @keyframes pulseRing {
+      0% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.05); }
+      100% { opacity: 0.3; transform: scale(1); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      main {
+        padding: 16px 12px;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .img-container {
+        width: 100px;
+        height: 100px;
+      }
+
+      .button-group {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.25rem;
+      }
+
+      .container {
+        padding: 16px;
+      }
+
+      .img-container {
+        width: 80px;
+        height: 80px;
+      }
+
+      .pensil-icon {
+        padding: 5px;
+      }
+
+      .pensil-icon i {
+        font-size: 0.9rem;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      textarea {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+      }
+
+      .toast {
+        bottom: 16px;
+        right: 16px;
+        padding: 10px 20px;
+        font-size: 0.85rem;
+      }
     }
   </style>
 </head>
 <body>
+  <canvas id="particles"></canvas>
   <%- include("./partials/navbar.ejs") %>
   <main>
-    
-    <div class="choosepic" style="height: 100vh;background-color: #555;"></div>
-    <div class="container">
+    <div class="container" style="margin-top: 50px;">
       <h1>Edit Profile</h1>
-      <form class="profile-form" action="/profile/<%= userInfo._id %>" method="post" enctype="multipart/form-data">
+      <form class="profile-form" action="/profile/<%= userInfo._id %>" method="POST" enctype="multipart/form-data" id="profileForm">
         <!-- Profile Picture -->
-        <div class="mix">
-          <div class="form-group">
-            <div class="imgContainer">
-              <img
-                id="profile-pic"
-                style="background-size:contain;"
-                src= <%= userInfo.ProfilePic %>>
+        <div class="form-group">
+          <label for="file-input">Profile Picture</label>
+          <div class="profile-preview">
+            <div class="img-container">
+              <img id="profile-pic" src="<%= userInfo.ProfilePic %>" alt="Profile Picture" loading="lazy">
+              <div class="pensil-icon" onclick="document.getElementById('file-input').click()" aria-label="Change Profile Picture">
+                <i class="fas fa-pencil-alt"></i>
+              </div>
             </div>
-            <input type="file" id="file-input" name="file-input" accept="image/*">
           </div>
+          <input type="file" id="file-input" name="file-input" accept="image/*">
+          <div class="error-message" id="file-error">Please select a valid image (max 5MB).</div>
         </div>
 
         <!-- Username -->
         <div class="form-group">
           <label for="userName">Username</label>
-          <input type="text" id="userName" name="userName" value="<%= userInfo.userName %>">
+          <input type="text" id="userName" name="userName" value="<%= userInfo.userName %>" required maxlength="30">
+          <div class="error-message" id="username-error">Username must be 3-30 characters.</div>
         </div>
 
         <!-- Email -->
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" value="<%= locals.user.email %>" readonly>
+          <input type="email" id="email" name="email" value="<%= locals.user.email %>" readonly aria-readonly="true">
         </div>
 
         <!-- Last Name -->
         <div class="form-group">
           <label for="lastName">Last Name</label>
-          <input type="text" id="lastName" name="lastName" value="<%= userInfo.lastName %>">
+          <input type="text" id="lastName" name="lastName" value="<%= userInfo.lastName %>" maxlength="50">
+          <div class="error-message" id="lastname-error">Last name must be 0-50 characters.</div>
         </div>
 
         <!-- Bio -->
         <div class="form-group">
           <label for="bio">Bio</label>
-          <textarea id="Bio" name="Bio" rows="3"><%= userInfo.Bio %></textarea>
+          <textarea id="bio" name="Bio" rows="3" maxlength="160"><%= userInfo.Bio %></textarea>
+          <div class="bio-counter" id="bio-counter">0/160</div>
+          <div class="error-message" id="bio-error">Bio must be 0-160 characters.</div>
         </div>
 
-        <!-- Submit Button -->
-        <button style="background-color: #007bff;" type="submit" class="btn">Save Changes</button>
+        <!-- Buttons -->
+        <div class="button-group">
+          <button type="submit" class="btn" id="save-btn" aria-label="Save Changes">Save Changes</button>
+          <button type="button" class="btn cancel" onclick="window.location.href='/'" aria-label="Cancel">Cancel</button>
+        </div>
       </form>
     </div>
   </main>
-  <script>document.getElementById('file-input').addEventListener('change', function (event) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const base65image = reader.result
+  <div class="toast" id="success-toast">Profile updated successfully!</div>
+  <script>
+    // Particle Background
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-        fetch('/profile/<%= userInfo._id %>', {
-            method: 'POST',
-            body: base65image,
-        }).then(() => console.log("uploaded")).catch((err)=> console.log(err))
-      };
-      
+    const particles = [];
+    const particleCount = 50;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 1.8 + 0.5;
+        this.speedX = Math.random() * 0.4 - 0.2;
+        this.speedY = Math.random() * 0.4 - 0.2;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.size > 0.2) this.size -= 0.005;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+
+      draw() {
+        ctx.fillStyle = 'rgba(79, 70, 229, 0.5)';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
-  });
+
+    function initParticles() {
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((particle, i) => {
+        particle.update();
+        particle.draw();
+        if (particle.size <= 0.2) {
+          particles.splice(i, 1);
+          particles.push(new Particle());
+        }
+      });
+      requestAnimationFrame(animateParticles);
+    }
+
+    initParticles();
+    animateParticles();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Profile Picture Preview
+    const fileInput = document.getElementById('file-input');
+    const profilePic = document.getElementById('profile-pic');
+    const fileError = document.getElementById('file-error');
+
+    fileInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        if (!file.type.startsWith('image/') || file.size > 5 * 1024 * 1024) {
+          fileError.style.display = 'block';
+          fileInput.value = '';
+          return;
+        }
+        fileError.style.display = 'none';
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          profilePic.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Form Validation and Bio Counter
+    const form = document.getElementById('profileForm');
+    const userNameInput = document.getElementById('userName');
+    const lastNameInput = document.getElementById('lastName');
+    const bioInput = document.getElementById('bio');
+    const bioCounter = document.getElementById('bio-counter');
+    const saveBtn = document.getElementById('save-btn');
+    const toast = document.getElementById('success-toast');
+
+    function updateBioCounter() {
+      const length = bioInput.value.length;
+      bioCounter.textContent = `${length}/160`;
+      bioCounter.classList.toggle('warning', length > 140);
+    }
+
+    updateBioCounter();
+    bioInput.addEventListener('input', updateBioCounter);
+
+    form.addEventListener('submit', (event) => {
+      let valid = true;
+      document.querySelectorAll('.error-message').forEach((el) => (el.style.display = 'none'));
+
+      // Username Validation
+      if (userNameInput.value.length < 3 || userNameInput.value.length > 30) {
+        document.getElementById('username-error').style.display = 'block';
+        valid = false;
+      }
+
+      // Last Name Validation
+      if (lastNameInput.value.length > 50) {
+        document.getElementById('lastname-error').style.display = 'block';
+        valid = false;
+      }
+
+      // Bio Validation
+      if (bioInput.value.length > 160) {
+        document.getElementById('bio-error').style.display = 'block';
+        valid = false;
+      }
+
+      if (!valid) {
+        event.preventDefault();
+      } else {
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+        saveBtn.style.opacity = '0.6';
+        // Simulate success for demo
+        setTimeout(() => {
+          toast.style.display = 'block';
+          formChanged = false;
+        }, 1000);
+      }
+    });
+
+    // Unsaved Changes Warning
+    let formChanged = false;
+    const inputs = form.querySelectorAll('input, textarea');
+    inputs.forEach((input) => {
+      input.addEventListener('change', () => {
+        formChanged = true;
+      });
+    });
+
+    // Reset formChanged on cancel
+    document.querySelector('.btn.cancel').addEventListener('click', () => {
+      formChanged = false;
+    });
+
+    // Scroll Animation
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = 1;
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const container = document.querySelector('.container');
+    container.style.opacity = 0;
+    container.style.transform = 'translateY(20px)';
+    observer.observe(container);
   </script>
   <%- include("./partials/script.ejs") %>
 </body>

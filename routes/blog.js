@@ -33,4 +33,6 @@ router.get("/blog/:id",checkUserAuth,async(req,res)=>{
     })
 }
 )
+router.post("/blog/:id",checkUserAuth,reactOnBlog)
+
 module.exports = router

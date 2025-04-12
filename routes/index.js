@@ -148,6 +148,24 @@ router.get("/follow/:id", checkUserAuth, async (req, res) => {
       return res.status(500).send("Internal Server Error");
   }
 });
+router.get("/settings", checkUserAuth, async (req, res) => {
+  console.log("settings")
+  const id = req.user._id;
+  const data = await userSchema.findById(id);
+  return res.render("settings", {
+    userInfo: data,
+    user: req.user,
+  });
+});
+router.post("/settings", checkUserAuth, async (req, res) => {
+  const id = req.user._id;
+  const { password } = req.body;
+  console.log("settings", req.body)
+  const data = await userSchema.findByIdAndUpdate(id, {
+    password: password,
+  });
+  res.redirect("/login");
+});
 router.post("/follow/:id", checkUserAuth, followUsers)
 
 

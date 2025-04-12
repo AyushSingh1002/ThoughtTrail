@@ -1,143 +1,679 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Designer Form</title>
-    <style>
-        /* General Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create a Blog Post</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #0a0f1a;
+      --bg-container: #1e1e1e;
+      --bg-input: #2c2c2c;
+      --border-input: #ccc;
+      --text-body: #ccc;
+      --text-label: #bbbbbb;
+      --text-white: #fff;
+      --accent: #5a55ca;
+      --accent-hover: #4842b6;
+      --alert-color: #e57373;
+      --success-color: #4ade80;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
+      --accent-glow: rgba(90, 85, 202, 0.3);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-        main {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
-            color: #333;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
 
-        .form-container {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            width: 100%;
-        }
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
 
-        .form-container h2 {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            color: #5a55ca;
-        }
+    /* Gradient Overlay */
+    main {
+      background: linear-gradient(135deg, var(--bg-main) 60%, rgba(90, 85, 202, 0.1));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px 16px;
+      position: relative;
+    }
 
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+    /* Particle Background */
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.12;
+    }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
+    .form-container {
+      width: 100%;
+      max-width: 800px;
+      background: var(--bg-container);
+      backdrop-filter: blur(10px);
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--accent-glow);
+      animation: fadeInUp 0.6s ease-out;
+      margin: auto;
+      margin-top: 50px;
+      position: relative;
+      overflow: hidden;
+    }
 
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
+    .form-container:hover {
+      box-shadow: 0 8px 32px var(--accent-glow);
+    }
 
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: #5a55ca;
-        }
+    .form-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+      opacity: 0.8;
+    }
 
-        .form-group textarea {
-            resize: none;
-        }
+    h2 {
+      text-align: center;
+      color: var(--text-white);
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      background: linear-gradient(90deg, var(--text-white), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      position: relative;
+    }
 
-        .form-group button {
-            width: 100%;
-            padding: 0.8rem;
-            background: #5a55ca;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background 0.3s;
-        }
+    h2::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 2px;
+      background: var(--accent);
+      margin: 8px auto;
+      border-radius: 2px;
+    }
 
-        .form-group button:hover {
-            background: #4842b6;
-        }
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
 
-        .form-footer {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-        }
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      color: var(--text-label);
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      transition: var(--transition);
+      transform-origin: left;
+    }
 
-        .form-footer a {
-            color: #5a55ca;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
+    .form-group:hover label {
+      color: var(--text-white);
+      transform: translateY(-2px);
+    }
 
-        .form-footer a:hover {
-            color: #4842b6;
-        }
-    </style>
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border-input);
+      border-radius: 8px;
+      background: var(--bg-input);
+      color: var(--text-label);
+      font-size: 0.95rem;
+      font-family: 'Poppins', sans-serif;
+      transition: var(--transition);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 6px var(--accent-glow);
+      outline: none;
+    }
+
+    .form-group input:not(:placeholder-shown),
+    .form-group select:not(:placeholder-shown),
+    .form-group textarea:not(:placeholder-shown) {
+      border-color: var(--accent);
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: var(--text-readonly, #999);
+      opacity: 0.7;
+      transition: var(--transition);
+    }
+
+    .form-group input:focus::placeholder,
+    .form-group textarea:focus::placeholder {
+      opacity: 0;
+    }
+
+    .form-group textarea {
+      resize: none;
+      height: 120px;
+    }
+
+    .form-group input[type="file"] {
+      padding: 10px 0;
+      border: none;
+      background: none;
+    }
+
+    .cover-preview {
+      display: none;
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    .cover-preview img {
+      max-width: 100%;
+      max-height: 150px;
+      border-radius: 8px;
+      border: 2px solid var(--accent);
+      object-fit: cover;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .form-group select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23bbbbbb' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 12px;
+      padding-right: 2.5rem;
+    }
+
+    .form-group button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+      color: var(--text-white);
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .form-group button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    .form-group button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease, height 0.6s ease;
+    }
+
+    .form-group button:hover::before {
+      width: 200px;
+      height: 200px;
+    }
+
+    .form-group button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-cancel {
+      width: 100%;
+      padding: 12px;
+      background: var(--bg-input);
+      color: var(--text-label);
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-cancel:hover {
+      background: var(--border-input);
+      color: var(--text-white);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow-sm);
+    }
+
+    .char-counter {
+      text-align: right;
+      font-size: 0.8rem;
+      color: var(--text-label);
+      margin-top: 4px;
+      transition: var(--transition);
+    }
+
+    .char-counter.warning {
+      color: var(--alert-color);
+    }
+
+    .error-message {
+      color: var(--alert-color);
+      font-size: 0.8rem;
+      margin-top: 4px;
+      display: none;
+      animation: slideIn 0.3s ease;
+    }
+
+    .form-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: var(--text-label);
+    }
+
+    .form-footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .form-footer a:hover {
+      color: var(--accent-hover);
+      text-decoration: underline;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--success-color);
+      color: var(--text-white);
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: var(--shadow-sm);
+      display: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+      border-left: 4px solid var(--accent);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateX(20px); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      main {
+        padding: 16px 12px;
+      }
+
+      .form-container {
+        padding: 24px;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        font-size: 0.9rem;
+        padding: 10px 14px;
+      }
+
+      .button-group {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .form-group button,
+      .btn-cancel {
+        width: 100%;
+      }
+
+      .cover-preview img {
+        max-height: 120px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h2 {
+        font-size: 1.25rem;
+      }
+
+      .form-container {
+        padding: 20px;
+      }
+
+      .form-group label {
+        font-size: 0.85rem;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+      }
+
+      .form-group textarea {
+        height: 100px;
+      }
+
+      .toast {
+        bottom: 16px;
+        right: 16px;
+        padding: 10px 20px;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <%- include("./partials/navbar.ejs") %>
-    <main>
+  <canvas id="particles"></canvas>
+  <%- include("./partials/navbar.ejs") %>
+  <main>
     <div class="form-container">
-        <h2>Designer Form</h2>
-        <form action="/blog" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="coverImg">cover Image</label>
-                <input type="file" id="coverImg" name="coverImg" required>
-            </div>
-            <div class="form-group">
-                <label for="title">Title</label>
-                <input type="title" id="title" name="title" placeholder="Enter the title here" required>
-            </div>
-            <div class="form-group">
-                <label for="Category">Category</label>
-                <select id="Category" name="Category" required>
-                    <option value="Personal">Personal</option>
-                    <option value="Professional">Professional</option>
-                    <option value="Creative">Creative</option>
-                    <option value="Hobbies">Hobbies</option>
-                    <option value="Social Topics">Social Topics</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="content">content</label>
-                <textarea id="content" name="content" rows="4" placeholder="Write your message here..."></textarea>
-            </div>
-            <div class="form-group">
-                <button type="submit">Submit</button>
-            </div>
-        </form>
-        <div class="form-footer">
-            <p>Need help? <a href="#">Contact us</a></p>
+      <h2>Create a Blog Post</h2>
+      <form action="/blog" method="POST" enctype="multipart/form-data" id="blogForm">
+        <!-- Cover Image -->
+        <div class="form-group">
+          <label for="coverImg">Cover Image</label>
+          <input type="file" id="coverImg" name="coverImg" accept="image/*" required>
+          <div class="cover-preview" id="coverPreview">
+            <img id="previewImg" alt="Cover Image Preview" loading="lazy">
+          </div>
+          <div class="error-message" id="coverImg-error">Please select a valid image (max 5MB).</div>
         </div>
+
+        <!-- Title -->
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input type="text" id="title" name="title" placeholder="Enter the title" required maxlength="100">
+          <div class="char-counter" id="title-counter">0/100</div>
+          <div class="error-message" id="title-error">Title must be 3-100 characters.</div>
+        </div>
+
+        <!-- Category -->
+        <div class="form-group">
+          <label for="Category">Category</label>
+          <select id="Category" name="Category" required>
+            <option value="" disabled selected>Select a category</option>
+            <option value="Personal">Personal</option>
+            <option value="Professional">Professional</option>
+            <option value="Creative">Creative</option>
+            <option value="Hobbies">Hobbies</option>
+            <option value="Social Topics">Social Topics</option>
+          </select>
+          <div class="error-message" id="category-error">Please select a category.</div>
+        </div>
+
+        <!-- Content -->
+        <div class="form-group">
+          <label for="content">Content</label>
+          <textarea id="content" name="content" rows="6" placeholder="Write your blog post..." maxlength="5000"></textarea>
+          <div class="char-counter" id="content-counter">0/5000</div>
+          <div class="error-message" id="content-error">Content must be 10-5000 characters.</div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="button-group">
+          <button type="submit" style="border-radius: 30px;" id="submit-btn" aria-label="Submit Blog Post">Submit</button>
+          <button type="button" class="btn-cancel" onclick="window.location.href='/blog'" aria-label="Cancel">Cancel</button>
+        </div>
+      </form>
+      <div class="form-footer">
+        <p>Need help? <a href="/">Contact us</a></p>
+      </div>
     </div>
-</main>
-    <%- include("./partials/script.ejs") %>
+  </main>
+  <div class="toast" id="success-toast">Blog post created successfully!</div>
+  <script>
+    // Particle Background
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const particleCount = 50;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 1.8 + 0.5;
+        this.speedX = Math.random() * 0.4 - 0.2;
+        this.speedY = Math.random() * 0.4 - 0.2;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.size > 0.2) this.size -= 0.005;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+
+      draw() {
+        ctx.fillStyle = 'rgba(90, 85, 202, 0.5)';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function initParticles() {
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((particle, i) => {
+        particle.update();
+        particle.draw();
+        if (particle.size <= 0.2) {
+          particles.splice(i, 1);
+          particles.push(new Particle());
+        }
+      });
+      requestAnimationFrame(animateParticles);
+    }
+
+    initParticles();
+    animateParticles();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Cover Image Preview
+    const coverInput = document.getElementById('coverImg');
+    const coverPreview = document.getElementById('coverPreview');
+    const previewImg = document.getElementById('previewImg');
+    const coverError = document.getElementById('coverImg-error');
+
+    coverInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        if (!file.type.startsWith('image/') || file.size > 5 * 1024 * 1024) {
+          coverError.style.display = 'block';
+          coverInput.value = '';
+          coverPreview.style.display = 'none';
+          return;
+        }
+        coverError.style.display = 'none';
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImg.src = e.target.result;
+          coverPreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        coverPreview.style.display = 'none';
+      }
+    });
+
+    // Form Validation and Character Counters
+    const form = document.getElementById('blogForm');
+    const titleInput = document.getElementById('title');
+    const categorySelect = document.getElementById('Category');
+    const contentInput = document.getElementById('content');
+    const titleCounter = document.getElementById('title-counter');
+    const contentCounter = document.getElementById('content-counter');
+    const submitBtn = document.getElementById('submit-btn');
+    const toast = document.getElementById('success-toast');
+
+    function updateTitleCounter() {
+      const length = titleInput.value.length;
+      titleCounter.textContent = `${length}/100`;
+      titleCounter.classList.toggle('warning', length > 80);
+    }
+
+    function updateContentCounter() {
+      const length = contentInput.value.length;
+      contentCounter.textContent = `${length}/5000`;
+      contentCounter.classList.toggle('warning', length > 4500);
+    }
+
+    updateTitleCounter();
+    updateContentCounter();
+    titleInput.addEventListener('input', updateTitleCounter);
+    contentInput.addEventListener('input', updateContentCounter);
+
+    form.addEventListener('submit', (event) => {
+      let valid = true;
+      document.querySelectorAll('.error-message').forEach((el) => (el.style.display = 'none'));
+
+      // Title Validation
+      if (titleInput.value.length < 3 || titleInput.value.length > 100) {
+        document.getElementById('title-error').style.display = 'block';
+        valid = false;
+      }
+
+      // Category Validation
+      if (!categorySelect.value) {
+        document.getElementById('category-error').style.display = 'block';
+        valid = false;
+      }
+
+      // Content Validation
+      if (contentInput.value.length < 10 || contentInput.value.length > 5000) {
+        document.getElementById('content-error').style.display = 'block';
+        valid = false;
+      }
+
+      if (!valid) {
+        event.preventDefault();
+      } else {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.style.opacity = '0.6';
+        // Simulate success for demo
+        setTimeout(() => {
+          toast.style.display = 'block';
+          formChanged = false;
+        }, 1000);
+      }
+    });
+
+    // Unsaved Changes Warning
+    let formChanged = false;
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach((input) => {
+      input.addEventListener('change', () => {
+        formChanged = true;
+      });
+    });
+
+    window.addEventListener('beforeunload', (event) => {
+      if (formChanged && !toast.style.display) {
+        event.preventDefault();
+        event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+      }
+    });
+
+    // Reset formChanged on cancel
+    document.querySelector('.btn-cancel').addEventListener('click', () => {
+      formChanged = false;
+    });
+
+    // Scroll Animation
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = 1;
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const container = document.querySelector('.form-container');
+    container.style.opacity = 0;
+    container.style.transform = 'translateY(20px)';
+    observer.observe(container);
+  </script>
+  <%- include("./partials/script.ejs") %>
 </body>
 </html>

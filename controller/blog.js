@@ -50,14 +50,12 @@ async function reactOnBlog(req, res) {
     if (curBlog.likes === null) {
         curBlog.likes = []; // Initialize likes if it doesn't exist
     }
-    console.log("curBlog", curBlog.likes)
     if (curBlog.likes.includes(userId)) {
         curBlog.likes.pull(userId);
     } else {
         curBlog.likes.push(userId);
     }
     await curBlog.save();
-    console.log(curBlog.likes)
     return res.status(200).redirect(`/blog/${blogId}`);
    } catch (error) {
         console.error("Error reacting to blog:", error.message);

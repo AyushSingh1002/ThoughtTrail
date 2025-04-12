@@ -1,235 +1,530 @@
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Navigation Bar</title>
-   <style>@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navigation Bar</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+  <style>
+    :root {
+      --bg-nav: #0a0f1a;
+      --bg-mobile: #1e1e1e;
+      --bg-translucent: rgba(10, 15, 26, 0.8);
+      --text-white: #fff;
+      --text-label: #bbbbbb;
+      --accent: #5a55ca;
+      --accent-hover: #4842b6;
+      --search-bg: #2c2c2c;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
+      --accent-glow: rgba(90, 85, 202, 0.3);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: "Poppins", sans-serif;
+      font-family: 'Poppins', sans-serif;
+      scroll-behavior: smooth;
     }
+
     body {
-      background: linear-gradient(to bottom, #dbeafe, #ffffff);
-      height: 100%;
+      background: var(--bg-nav);
+      min-height: 100vh;
+      overflow-x: hidden;
     }
-    #navgap{
-     margin: 1rem;
-     transition: color 150ms ease-in-out;
-    }
-    #navgap:hover {
-  text-decoration: underline;
-  color: gainsboro;
-}
-    .avatar {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  box-shadow: 0 0 3px 0 black;
-  object-fit: cover;
-  display: flex;
-  align-items: center;
-  justify-content: end;
-}
+
     .nav {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      padding: 15px 200px;
-      background: #4a98f7;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-    .nav,
-    .nav .nav-links {
+      padding: 15px 100px;
+      background: var(--bg-nav);
+      backdrop-filter: blur(90px);
+      box-shadow: var(--shadow-sm);
       display: flex;
       align-items: center;
-    }
-    .nav {
       justify-content: space-between;
       z-index: 1000;
+      transition: var(--transition);
     }
-    a {
-      color: #fff;
-      text-decoration: none;
+
+    .nav.scrolled {
+      background: rgba(10, 15, 26, 0.9);
+      box-shadow: 0 4px 12px var(--shadow-md);
     }
+
     .nav .logo {
-      font-size: 22px;
-      font-weight: 500;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-white);
+      text-decoration: none;
+      background: linear-gradient(90deg, var(--text-white), var(--accent));
+      -webkit-text-fill-color: transparent;
+      transition: var(--transition);
     }
-    .nav .nav-links {
-      column-gap: 20px;
+
+    .nav .logo:hover {
+      transform: scale(1.05);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
       list-style: none;
+      gap: 30px;
     }
-    .nav .nav-links a {
-      transition: all 0.2s linear;
+
+    .nav-links li a {
+      color: var(--text-white);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 400;
+      position: relative;
+      transition: var(--transition);
     }
-    .nav.openSearch .nav-links a {
-      opacity: 0;
-      pointer-events: none;
+
+    .nav-links li a:hover {
+      color: var(--accent);
     }
-    .nav .search-icon {
-      color: #fff;
-      font-size: 20px;
-      cursor: pointer;
-    }
-    .nav .search-box {
+
+    .nav-links li a::after {
+      content: '';
       position: absolute;
-      right: 250px;
-      height: 45px;
-      max-width: 555px;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: var(--transition);
+    }
+
+    .nav-links li a:hover::after {
+      width: 100%;
+    }
+
+    .search-box {
+      position: relative;
+      height: 40px;
+      max-width: 400px;
       width: 100%;
       opacity: 0;
       pointer-events: none;
-      transition: all 0.2s linear;
+      transition: var(--transition);
+      margin-left: 20px;
     }
+
     .nav.openSearch .search-box {
       opacity: 1;
       pointer-events: auto;
     }
-    .search-box .search-icon {
-      position: absolute;
-      left: 15px;
-      top: 50%;
-      left: 15px;
-      color: #4a98f7;
-      transform: translateY(-50%);
-    }
+
     .search-box input {
       height: 100%;
       width: 100%;
       border: none;
       outline: none;
-      border-radius: 6px;
-      background-color: #fff;
+      border-radius: 8px;
+      background: var(--search-bg);
+      color: var(--text-white);
       padding: 0 15px 0 45px;
+      font-size: 0.9rem;
+      transition: var(--transition);
     }
-    .nav .navOpenBtn,
-    .nav .navCloseBtn {
+
+    .search-box input:focus {
+      box-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    .search-box .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .search-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background: var(--bg-mobile);
+      border-radius: 8px;
+      margin-top: 5px;
+      max-height: 200px;
+      overflow-y: auto;
       display: none;
+      box-shadow: var(--shadow-sm);
+      z-index: 10;
     }
-    /* responsive */
+
+    .search-suggestions.active {
+      display: block;
+    }
+
+    .search-suggestions li {
+      padding: 10px 15px;
+      color: var(--text-white);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .search-suggestions li:hover {
+      background: var(--accent);
+      color: var(--text-white);
+    }
+
+    .nav-open-btn,
+    .nav-close-btn {
+      display: none;
+      color: var(--text-white);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .nav-open-btn:hover,
+    .nav-close-btn:hover {
+      color: var(--accent);
+    }
+
+    .profile {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--text-white);
+      box-shadow: 0 0 5px var(--shadow-sm);
+      object-fit: cover;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .avatar:hover {
+      transform: scale(1.1);
+      border-color: var(--accent);
+    }
+
+    .dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: var(--bg-mobile);
+      border-radius: 8px;
+      box-shadow: var(--shadow-sm);
+      min-width: 180px;
+      margin-top: 10px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: var(--transition);
+      z-index: 10;
+    }
+
+    .dropdown.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown ul {
+      list-style: none;
+      padding: 10px 0;
+    }
+
+    .dropdown li a {
+      display: block;
+      padding: 10px 20px;
+      color: var(--text-white);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .dropdown li a:hover {
+      background: var(--accent);
+      color: var(--text-white);
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--alert-color, #e57373);
+      color: var(--text-white);
+      font-size: 0.7rem;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+    }
+
+    .theme-toggle {
+      color: var(--text-white);
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin-left: 20px;
+      transition: var(--transition);
+    }
+
+    .theme-toggle:hover {
+      color: var(--accent);
+    }
+
+    /* Responsive */
     @media screen and (max-width: 1160px) {
       .nav {
-        padding: 15px 100px;
+        padding: 15px 60px;
       }
-      .nav .search-box {
-        right: 150px;
+      .search-box {
+        max-width: 350px;
       }
     }
+
     @media screen and (max-width: 950px) {
       .nav {
-        padding: 15px 50px;
+        padding: 15px 40px;
       }
-      .nav .search-box {
-        right: 100px;
-        max-width: 400px;
+      .search-box {
+        max-width: 300px;
       }
     }
+
     @media screen and (max-width: 768px) {
-      .nav .navOpenBtn,
-      .nav .navCloseBtn {
+      .nav-open-btn,
+      .nav-close-btn {
         display: block;
       }
+
       .nav {
         padding: 15px 20px;
       }
-      .nav .nav-links {
+
+      .nav-links {
         position: fixed;
         top: 0;
         left: -100%;
         height: 100%;
-        max-width: 280px;
-        width: 100%;
-        padding-top: 100px;
-        row-gap: 30px;
+        width: 280px;
+        padding-top: 80px;
         flex-direction: column;
-        background-color: #11101d;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        transition: all 0.4s ease;
+        background: transparent;
+        box-shadow: var(--shadow-md);
+        transition: left 0.4s ease;
         z-index: 100;
       }
+
       .nav.openNav .nav-links {
         left: 0;
       }
-      .nav .navOpenBtn {
-        color: #fff;
-        font-size: 20px;
-        cursor: pointer;
+
+      .nav-links li {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.); /* darker + 80% opacity */
+  backdrop-filter: blur(20px); /* nice blur effect */
+  -webkit-backdrop-filter: blur(20px); /* Safari support */
+
+        padding: 10px 20px;
       }
-      .nav .navCloseBtn {
+
+      .nav-links li a {
+        font-size: 1rem;
+      }
+
+      .nav-close-btn {
         position: absolute;
         top: 20px;
         right: 20px;
-        color: #fff;
-        font-size: 20px;
-        cursor: pointer;
       }
-      .nav .search-box {
+
+      .search-box {
+        position: absolute;
         top: calc(100% + 10px);
-        max-width: calc(100% - 20px);
-        right: 50%;
-        transform: translateX(50%);
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: calc(100% - 40px);
+        margin-left: 0;
+        box-shadow: var(--shadow-sm);
       }
-      
-    }</style>
-    <!-- Unicons CSS -->
-    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" />
-  </head>
-  <body>
-    <nav class="nav">
-      <i class="uil uil-bars navOpenBtn"></i>
-      <a href="/" class="logo">ThoughtTrail</a>
-      <ul class="nav-links">
-        <i class="uil uil-times navCloseBtn"></i>
-        <li ><a id="navgap" href="/">Home</a></li>
-        <% if (!locals.user) { %>
-          <li><a id="navgap" href="/login">Login</a></li>
-          <li><a id="navgap" href="/signup">SignUp</a></li>
-        <% } else { %> 
-        <li><a id="navgap" href="/profile/<%= user._id %>">Profile</a></li>
-        <li><a id="navgap" href="/blog">Create Blogs</a></li>
-        <li><a id="navgap" href="/logout">Log-out</a></li>
-        <% } %>
+
+      .dropdown {
+        width: 100%;
+        right: 20px;
+      }
+
+      .theme-toggle {
+        margin-left: 10px;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .nav {
+        padding: 10px 15px;
+      }
+
+      .nav .logo {
+        font-size: 1.25rem;
+      }
+
+      .avatar {
+        width: 35px;
+        height: 35px;
+      }
+
+      .search-box {
+        max-width: calc(100% - 30px);
+      }
+
+      .nav-links {
+        width: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <i class="uil uil-bars nav-open-btn" aria-label="Open Navigation Menu"></i>
+    <a href="/" class="logo">ThoughtTrail</a>
+    <ul class="nav-links">
+      <i class="uil uil-times nav-close-btn" aria-label="Close Navigation Menu"></i>
+      <li><a href="/">Home</a></li>
+      <% if (!locals.user) { %>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/signup">Sign Up</a></li>
+      <% } else { %>
+        <li><a href="/profile/<%= user._id %>">Profile</a></li>
+        <li><a href="/blog">Create Blogs</a></li>
+        <li><a href="/logout">Log Out</a></li>
+      <% } %>
+    </ul>
+    <div class="search-box">
+      <i class="uil uil-search search-icon" aria-label="Search Blogs"></i>
+      <input type="text" placeholder="Search Blogs..." aria-label="Search Blogs">
+      <ul class="search-suggestions">
+        <!-- Suggestions populated dynamically -->
       </ul>
-      <i class="uil uil-search search-icon" id="searchIcon"></i>
-      <div class="search-box">
-        <i class="uil uil-search search-icon"></i> 
-        <input type="text" placeholder="Search Blogs" />
-      </div>
+    </div>
     <% if (locals.user) { %>
       <div class="profile">
-        <a href="/profile/<%= user._id %>"><img class="avatar"  src=<%= user.ProfilePic %> alt="avatar"></a>
+        <img class="avatar" src="<%= user.ProfilePic %>" alt="User Avatar" loading="lazy">
+        <div class="notification-badge">1</div>
+        <div class="dropdown">
+          <ul>
+            <li><a href="/profile/<%= user._id %>">View Profile</a></li>
+            <li><a href="/blog">Create Blog</a></li>
+            <li><a href="/settings">Settings</a></li>
+            <li><a href="/logout">Log Out</a></li>
+          </ul>
+        </div>
       </div>
     <% } %>
-    </nav>
-  </body>
+    <i class="uil uil-moon theme-toggle" aria-label="Toggle Dark/Light Theme"></i>
+  </nav>
   <script>
-    const nav = document.querySelector(".nav"),
-  searchIcon = document.querySelector("#searchIcon"),
-  navOpenBtn = document.querySelector(".navOpenBtn"),
-  navCloseBtn = document.querySelector(".navCloseBtn");
-searchIcon.addEventListener("click", () => {
-  nav.classList.toggle("openSearch");
-  nav.classList.remove("openNav");
-  if (nav.classList.contains("openSearch")) {
-    return searchIcon.classList.replace("uil-search", "uil-times");
-  }
-  searchIcon.classList.replace("uil-times", "uil-search");
-});
-navOpenBtn.addEventListener("click", () => {
-  nav.classList.add("openNav");
-  nav.classList.remove("openSearch");
-  searchIcon.classList.replace("uil-times", "uil-search");
-});
-navCloseBtn.addEventListener("click", () => {
-  nav.classList.remove("openNav");
+    const nav = document.querySelector('.nav');
+    const searchIcon = document.querySelector('.search-icon');
+    const searchInput = document.querySelector('.search-box input');
+    const searchSuggestions = document.querySelector('.search-suggestions');
+    const navOpenBtn = document.querySelector('.nav-open-btn');
+    const navCloseBtn = document.querySelector('.nav-close-btn');
+    const avatar = document.querySelector('.avatar');
+    const dropdown = document.querySelector('.dropdown');
+    const themeToggle = document.querySelector('.theme-toggle');
 
-  
-});
+    // Search Toggle
+    searchIcon.addEventListener('click', () => {
+      nav.classList.toggle('openSearch');
+      nav.classList.remove('openNav');
+      if (nav.classList.contains('openSearch')) {
+        searchIcon.classList.replace('uil-search', 'uil-times');
+        searchInput.focus();
+      } else {
+        searchIcon.classList.replace('uil-times', 'uil-search');
+        searchSuggestions.classList.remove('active');
+      }
+    });
+
+    // Mobile Menu
+    navOpenBtn.addEventListener('click', () => {
+      nav.classList.add('openNav');
+      nav.classList.remove('openSearch');
+      searchIcon.classList.replace('uil-times', 'uil-search');
+    });
+
+    navCloseBtn.addEventListener('click', () => {
+      nav.classList.remove('openNav');
+    });
+
+    // Dropdown Toggle
+    if (avatar && dropdown) {
+      avatar.addEventListener('click', () => {
+        dropdown.classList.toggle('active');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.classList.remove('active');
+        }
+      });
+    }
+
+    // Search Suggestions (Mock)
+    const mockSuggestions = ['Personal Blogs', 'Professional Tips', 'Creative Ideas', 'Hobbies', 'Social Topics'];
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.trim().toLowerCase();
+      searchSuggestions.innerHTML = '';
+      if (query) {
+        const filtered = mockSuggestions.filter(s => s.toLowerCase().includes(query));
+        filtered.forEach(s => {
+          const li = document.createElement('li');
+          li.textContent = s;
+          li.addEventListener('click', () => {
+            searchInput.value = s;
+            searchSuggestions.classList.remove('active');
+          });
+          searchSuggestions.appendChild(li);
+        });
+        searchSuggestions.classList.toggle('active', filtered.length > 0);
+      } else {
+        searchSuggestions.classList.remove('active');
+      }
+    });
+
+    // Scroll Effect
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Theme Toggle (Placeholder)
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('light-theme');
+      themeToggle.classList.toggle('uil-moon');
+      themeToggle.classList.toggle('uil-sun');
+    });
+
+    // Close Mobile Menu on Link Click
+    document.querySelectorAll('.nav-links li a').forEach(link => {
+      link.addEventListener('click', () => {
+        nav.classList.remove('openNav');
+      });
+    });
   </script>
+</body>
 </html>
