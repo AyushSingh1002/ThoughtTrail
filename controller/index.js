@@ -11,7 +11,11 @@ async function createUser(req,res) {
             password: body.password
         })
         const token = createUserToken(user)
-        return res.cookie("token", token).redirect("/")
+        return res.cookie("token", token, {
+            httpOnly: true,      
+            sameSite: "Strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000, 
+          }).redirect("/")
     } catch (error) {
         console.log("error", error)
         return  res.render("signUp",{

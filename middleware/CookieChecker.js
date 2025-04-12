@@ -16,7 +16,6 @@ async function checkUserAuth(req, res, next) {
   if(!user) {
    return next()
   };
-  
   const userInfo = await userSchema.findById(user._id)
    req.user = userInfo
   next()

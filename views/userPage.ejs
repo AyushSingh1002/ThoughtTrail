@@ -12,10 +12,20 @@
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #f0f4ff, #e8ebf5);
       color: #333;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      display: grid;
+      place-items: center;
       min-height: 100vh;
+    }
+    .container-2 {
+      max-width: 450px;
+      width: 90%;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-top: 1px;
+      padding: 20px 25px;
+      text-align: center;
     }
 
     .container {
@@ -175,8 +185,86 @@
 
       .container {
         margin: 10px;
+        width: calc(100% - 70px);
       }
     }
+    body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f8f8;
+}
+
+.blog-list {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 3 columns on desktop */
+  gap: 20px; /* Increased spacing between items */
+}
+
+.blog-item {
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center; /* Center the title */
+  padding: 10px; /* Add padding for spacing */
+}
+
+.blog-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.blog-image {
+  width: 100%;
+  height: 180px; /* Larger image size */
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.blog-title {
+  font-size: 16px; /* Slightly smaller title */
+  margin-top: 10px;
+  color: #333;
+  font-weight: bold;
+}
+
+.no-blogs {
+  text-align: center;
+  color: #999;
+  font-size: 18px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for tablets */
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr); /* 1 column for mobile */
+  }
+
+  .blog-image {
+    height: 150px; /* Slightly smaller images for mobile */
+    object-fit: cover;
+    
+  }
+
+  .blog-title {
+    font-size: 14px; /* Smaller titles for mobile */
+  }
+}
+
   </style>
 </head>
 <body>
@@ -225,6 +313,23 @@
       <p>Want to see more? <a href="/">Explore other profiles</a></p>
     </div>
   </div>
+  <div class="container-2">
+    <h2 style="margin: 0%;">Blogs</h2>
+    <div class="blog-list">
+      <% if (userBlogs.length > 0) { %>
+        <div class="grid">
+          <% userBlogs.forEach(blog => { %>
+            <div class="blog-item" onclick="location.href='/blog/<%= blog._id %>'">
+              <img src="<%= blog.CoverImgURL %>" alt="Blog Cover" class="blog-image" />
+              <h4 class="blog-title"><%= blog.title %></h4>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="no-blogs">No blogs available.</p>
+      <% } %>
+    </div>
+    
   <script>
     function showFullBio(event) {
       event.preventDefault();

@@ -14,7 +14,7 @@ app.use(cookieparser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/profilePic', express.static(path.join(__dirname, 'public/profilePic')));
+app.use(express.static(path.join(__dirname, 'public/logopics')));
 app.set("view engine","ejs");
 app.set("views",path.resolve("./views"))
 

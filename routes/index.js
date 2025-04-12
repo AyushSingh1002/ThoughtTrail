@@ -31,14 +31,20 @@ router.post("/signup", createUser)
 router.get("/login", (req,res) => res.render("log"))
 router.post("/login", async (req,res)=>{
     const body = req.body
-    const {email, password} = body
+    const email = body.username;
+    const {password} = body
+    console.log(email, password)
     try {
         const user = await userSchema.findOne({email, password})
         if(!user){
             return  res.render({error : "password or email is wrong"})
         }
         const token = createUserToken(user)
-        return res.cookie("token", token).redirect("/")
+        return res.cookie("token", token, {
+          httpOnly: true,      
+          sameSite: "Strict",
+          maxAge: 7 * 24 * 60 * 60 * 1000, 
+        }).redirect("/")
     } catch (error) {
         return  res.render("signUp",{
             errors: "incorrect email or password"
@@ -111,6 +117,7 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
   }
 });
 router.get("/follow/:id", checkUserAuth, async (req, res) => {
+  console.log("Route hit");
   try {
       const userId = req.params.id; // Directly extract the ID from params
       
@@ -126,10 +133,15 @@ router.get("/follow/:id", checkUserAuth, async (req, res) => {
           return res.status(404).send("User not found");
       }
 
+      //users blogs
+      const userBlogs = await blogSchema.find({"createdby" : userId});
+      console.log("userblogs", userBlogs)
+
       // Render the user page with the fetched user details
       return res.render("userPage", {
           curUser: currentUser,
           user: req.user,
+          userBlogs: userBlogs,
       });
   } catch (error) {
       console.error("Error fetching user:", error);
