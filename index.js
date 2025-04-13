@@ -10,10 +10,10 @@ const CommentRouter = require("./routes/comment");
 const cors = require("cors");
 
 const app = express();
-const port = process.env.port || 3000; // Fallback to port 3000 if env variable is missing
+const port = process.env.port; // Fallback to port 3000 if env variable is missing
 
 // Middleware
-app.use(cors()); // Enable CORS for all origins (for development purposes)
+app.use(cors({ origin: '*' }))
 app.use(cookieparser()); // Parse cookies
 app.use(express.json()); // Parse JSON requests
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded requests

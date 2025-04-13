@@ -87,6 +87,7 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
     const body = req.body;
 
     let profilePicUrl = "";
+    console.log("File received:", file);
 
     if (file) {
       const response = await cloudinary.uploader.upload(file.path, {
