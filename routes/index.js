@@ -90,12 +90,18 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
 
     if (file) {
       const fileBuffer = fs.readFileSync(file.path);
+
+      const base64String = `data:${file.mimetype};base64,${fileBuffer.toString("base64")}`;
+      // 👆 very important: add data:mimetype;base64 prefix
+
       const response = await imagekitpk.upload({
-        file: fileBuffer.toString("base64"),
+        file: base64String,
         fileName: file.originalname,
       });
+
       profilePicUrl = response.url;
-      fs.unlinkSync(file.path);
+      
+      fs.unlinkSync(file.path); // delete local file
     }
 
     const updatedUser = await userSchema.findByIdAndUpdate(
@@ -105,9 +111,9 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
         email: body.email,
         Bio: body.Bio,
         lastName: body.lastName,
-        ProfilePic: profilePicUrl || body.ProfilePic,
+        ProfilePic: profilePicUrl || body.ProfilePic, // If new image uploaded, else keep old
       },
-      { new: true }
+      { new: true } // Return the updated document
     );
 
     res.redirect(`/profile/${req.user._id}`);
@@ -116,6 +122,7 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
     res.status(500).json({ message: "Error updating profile", error: error.message });
   }
 });
+
 router.get("/follow/:id", checkUserAuth, async (req, res) => {
   console.log("Route hit");
   try {

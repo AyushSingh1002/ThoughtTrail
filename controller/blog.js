@@ -4,38 +4,42 @@ const fs = require("fs");
 
 async function createBlog(req, res) {
     try {
-        const { title, content, category} = req.body;
-        const file = req.file; // Assuming you're using multer for file uploads
-        let blogPic = "";
-
-    if (file) {
-      const fileBuffer = fs.readFileSync(file.path);
-      const response = await imagekitpk.upload({
-        file: fileBuffer.toString("base64"),
-        fileName: file.originalname,
-      });
-      blogPic = response.url;
-      fs.unlinkSync(file.path);
-    }
-        
-        // Create a new blog entry
-        const blog = await blogSchema.create({
-            title,
-            content,
-            category,
-            CoverImgURL : (`${blogPic}`),
-            createdby: req.user._id,
+      const { title, content, category } = req.body;
+      const file = req.file; // Already in memory!
+  
+      let blogPic = "";
+  
+      if (file) {
+        const base64String = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+  
+        const response = await imagekitpk.upload({
+          file: base64String,
+          fileName: file.originalname,
         });
-        return res.status(201).redirect("/");
+  
+        blogPic = response.url;
+      }
+  
+      const blog = await blogSchema.create({
+        title,
+        content,
+        category,
+        CoverImgURL: blogPic,
+        createdby: req.user._id,
+      });
+  
+      return res.status(201).redirect("/");
     } catch (error) {
-        console.error("Error creating blog:", error.message);
-
-        // Handle specific validation errors
-        if (error.name === "ValidationError") {
-            return res.status(400).json({ error: error.message });
-        }
+      console.error("Error creating blog:", error.message);
+  
+      if (error.name === "ValidationError") {
+        return res.status(400).json({ error: error.message });
+      }
+  
+      return res.status(500).json({ error: "Server error" });
     }
-}
+  }
+  
 async function reactOnBlog(req, res) {
     const blogId = req.params.id;
     const userId = req.user._id;
