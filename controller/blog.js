@@ -1,3 +1,4 @@
+const cloudinary = require("../lib/cloudinary.js");
 const imagekitpk = require("../lib/imagekit");
 const blogSchema = require("../Model/blog");
 const fs = require("fs");
@@ -10,14 +11,16 @@ async function createBlog(req, res) {
       let blogPic = "";
   
       if (file) {
-        const base64String = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
-  
-        const response = await imagekitpk.upload({
-          file: base64String,
-          fileName: file.originalname,
-        });
-  
-        blogPic = response.url;
+        const response = await cloudinary.uploader.upload(file.path, {
+            public_id: file.originalname.split(".")[0],
+          });
+            
+              blogPic = response.url;
+            
+              // Cleanup temporary file
+              fs.unlink(file.path, (err) => {
+                if (err) console.error('Error deleting temporary file:', err);
+              });
       }
   
       const blog = await blogSchema.create({
@@ -36,7 +39,7 @@ async function createBlog(req, res) {
         return res.status(400).json({ error: error.message });
       }
   
-      return res.status(500).json({ error: "Server error" });
+      return res.status(500).json({ error: "Server error", error });
     }
   }
   

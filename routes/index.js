@@ -5,6 +5,7 @@ const { createUser, findUser, followUsers } = require("../controller")
 const blogSchema = require("../Model/blog")
 const express = require("express")
 const userSchema = require("../Model/index")
+const cloudinary = require("../lib/cloudinary.js")
 const imagekitpk = require("../lib/imagekit")
 const {createUserToken} = require("../Services/Auth")
 const fs = require("fs")
@@ -89,19 +90,16 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
     let profilePicUrl = "";
 
     if (file) {
-      const fileBuffer = fs.readFileSync(file.path);
-
-      const base64String = `data:${file.mimetype};base64,${fileBuffer.toString("base64")}`;
-      // 👆 very important: add data:mimetype;base64 prefix
-
-      const response = await imagekitpk.upload({
-        file: base64String,
-        fileName: file.originalname,
+      const response = await cloudinary.uploader.upload(file.path, {
+        public_id: file.originalname.split('.')[0], // Optional
       });
-
+    
       profilePicUrl = response.url;
-      
-      fs.unlinkSync(file.path); // delete local file
+    
+      // Cleanup temporary file
+      fs.unlink(file.path, (err) => {
+        if (err) console.error('Error deleting temporary file:', err);
+      });
     }
 
     const updatedUser = await userSchema.findByIdAndUpdate(
