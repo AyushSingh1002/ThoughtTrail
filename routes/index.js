@@ -6,7 +6,6 @@ const blogSchema = require("../Model/blog")
 const express = require("express")
 const userSchema = require("../Model/index")
 const cloudinary = require("../lib/cloudinary.js")
-const imagekitpk = require("../lib/imagekit")
 const {createUserToken} = require("../Services/Auth")
 const fs = require("fs")
 const { console } = require("inspector")
@@ -95,7 +94,7 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
       });
     
       profilePicUrl = response.url;
-    
+      console.log("Uploaded image URL:", profilePicUrl);
       // Cleanup temporary file
       fs.unlink(file.path, (err) => {
         if (err) console.error('Error deleting temporary file:', err);

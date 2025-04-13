@@ -7,9 +7,10 @@ const {router} =require("./routes")
 const blogRout =require("./routes/blog")
 const {Connector} = require("./Database/index")
 const CommentRouter = require("./routes/comment")
+const cors = require("cors")
 const port = process.env.port
 const app = express()
-
+app.use(cors())
 app.use(cookieparser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));

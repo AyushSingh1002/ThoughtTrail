@@ -1,5 +1,4 @@
 const cloudinary = require("../lib/cloudinary.js");
-const imagekitpk = require("../lib/imagekit");
 const blogSchema = require("../Model/blog");
 const fs = require("fs");
 
@@ -12,8 +11,8 @@ async function createBlog(req, res) {
   
       if (file) {
         const response = await cloudinary.uploader.upload(file.path, {
-            public_id: file.originalname.split(".")[0],
-          });
+          public_id: file.originalname.split(".")[0],
+        });
             
               blogPic = response.url;
             
@@ -30,6 +29,7 @@ async function createBlog(req, res) {
         CoverImgURL: blogPic,
         createdby: req.user._id,
       });
+      console.log("Blog created successfully:", blogPic);
   
       return res.status(201).redirect("/");
     } catch (error) {
