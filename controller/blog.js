@@ -33,7 +33,8 @@ async function createBlog(req, res) {
   
       return res.status(201).redirect("/");
     } catch (error) {
-      console.error("Error creating blog:", error.message);
+        console.error("Error uploading to Cloudinary:", err); // Log full error details
+        throw err; // Re-throw to allow your existing error handler to catch it
   
       if (error.name === "ValidationError") {
         return res.status(400).json({ error: error.message });

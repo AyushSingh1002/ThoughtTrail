@@ -116,8 +116,8 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
 
     res.redirect(`/profile/${req.user._id}`);
   } catch (error) {
-    console.error("Error updating profile:", error.message);
-    res.status(500).json({ message: "Error updating profile", error: error.message });
+    console.error("Error uploading to Cloudinary:", err); // Log full error details
+  throw err; // Re-throw to allow your existing error handler to catch it
   }
 });
 
