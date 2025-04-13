@@ -12,9 +12,10 @@ async function createBlog(req, res) {
       if (file) {
         const response = await cloudinary.uploader.upload(file.path, {
           public_id: file.originalname.split(".")[0],
+            secure:false, // Optional, set to true if you want to use HTTPS
         });
             
-              blogPic = response.url;
+              blogPic = response.secure_url;
             
               // Cleanup temporary file
               fs.unlink(file.path, (err) => {
@@ -26,10 +27,9 @@ async function createBlog(req, res) {
         title,
         content,
         category,
-        CoverImgURL: blogPic,
+        CoverImgURL: `${blogPic}`,
         createdby: req.user._id,
       });
-      console.log("Blog created successfully:", blogPic);
   
       return res.status(201).redirect("/");
     } catch (error) {

@@ -9,6 +9,7 @@ const cloudinary = require("../lib/cloudinary.js")
 const {createUserToken} = require("../Services/Auth")
 const fs = require("fs")
 const { console } = require("inspector")
+const { flushCompileCache } = require("module")
 
 const router = express.Router()
 
@@ -87,15 +88,14 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
     const body = req.body;
 
     let profilePicUrl = "";
-    console.log("File received:", file);
 
     if (file) {
       const response = await cloudinary.uploader.upload(file.path, {
         public_id: file.originalname.split('.')[0], // Optional
+        secure: false, // Optional, set to true if you want to use HTTPS
       });
     
-      profilePicUrl = response.url;
-      console.log("Uploaded image URL:", profilePicUrl);
+      profilePicUrl = response.secure_url;
       // Cleanup temporary file
       fs.unlink(file.path, (err) => {
         if (err) console.error('Error deleting temporary file:', err);
@@ -109,7 +109,7 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
         email: body.email,
         Bio: body.Bio,
         lastName: body.lastName,
-        ProfilePic: profilePicUrl || body.ProfilePic, // If new image uploaded, else keep old
+        ProfilePic: `${profilePicUrl}` || body.ProfilePic, // If new image uploaded, else keep old
       },
       { new: true } // Return the updated document
     );
