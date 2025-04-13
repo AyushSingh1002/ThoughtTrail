@@ -9,21 +9,10 @@ const cloudinary = require("../lib/cloudinary.js")
 const {createUserToken} = require("../Services/Auth")
 const fs = require("fs")
 const { console } = require("inspector")
-const { flushCompileCache } = require("module")
-
+const streamifier = require('streamifier');
 const router = express.Router()
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, path.resolve("./public/profilePic"))
-    },
-    filename: function (req, file, cb) {
-      const fileName = `${Date.now()}-${file.originalname}`
-      cb(null, fileName)
-    }
-  })
-
-  const upload = multer({storage})
+const upload = multer({ storage: multer.memoryStorage() });
 
 
 
@@ -90,18 +79,33 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
     let profilePicUrl = "";
 
     if (file) {
-      const response = await cloudinary.uploader.upload(file.path, {
-        public_id: file.originalname.split('.')[0], // Optional
-        secure: false, // Optional, set to true if you want to use HTTPS
-      });
-    
-      profilePicUrl = response.secure_url;
-      // Cleanup temporary file
-      fs.unlink(file.path, (err) => {
-        if (err) console.error('Error deleting temporary file:', err);
+      // Stream file buffer to Cloudinary
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          public_id: `${Date.now()}-${file.originalname.split('.')[0]}`, // Use timestamp to avoid conflicts
+          folder: 'profilePics', // Optional: organize in Cloudinary
+          secure: true, // Use HTTPS for secure URLs
+        },
+        (error, response) => {
+          if (error) {
+            console.error('Error uploading to Cloudinary:', error);
+            throw error; // Let the catch block handle it
+          }
+          profilePicUrl = response.secure_url;
+        }
+      );
+
+      // Pipe the file buffer to Cloudinary
+      streamifier.createReadStream(file.buffer).pipe(uploadStream);
+
+      // Wait for the upload to complete (since upload_stream is async)
+      await new Promise((resolve, reject) => {
+        uploadStream.on('finish', resolve);
+        uploadStream.on('error', reject);
       });
     }
 
+    // Update user in the database
     const updatedUser = await userSchema.findByIdAndUpdate(
       req.params.id,
       {
@@ -109,15 +113,18 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
         email: body.email,
         Bio: body.Bio,
         lastName: body.lastName,
-        ProfilePic: `${profilePicUrl}` || body.ProfilePic, // If new image uploaded, else keep old
+        ProfilePic: profilePicUrl || body.ProfilePic, // Use new URL or keep existing
       },
       { new: true } // Return the updated document
     );
 
+    console.log("Updated user:", updatedUser); // Log updated user
+
     res.redirect(`/profile/${req.user._id}`);
   } catch (error) {
-    console.error("Error uploading to Cloudinary:", err); // Log full error details
-  throw err; // Re-throw to allow your existing error handler to catch it
+    console.error("Error in profile update:", error); // Log full error details
+    // Optionally render an error page or redirect with a message
+    res.status(500).send("Error updating profile");
   }
 });
 

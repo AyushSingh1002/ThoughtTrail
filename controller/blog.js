@@ -5,42 +5,55 @@ const fs = require("fs");
 async function createBlog(req, res) {
     try {
       const { title, content, category } = req.body;
-      const file = req.file; // Already in memory!
+      const file = req.file; // File is in memory (buffer)
   
       let blogPic = "";
   
       if (file) {
-        const response = await cloudinary.uploader.upload(file.path, {
-          public_id: file.originalname.split(".")[0],
-            secure:false, // Optional, set to true if you want to use HTTPS
+        // Stream file buffer to Cloudinary
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            public_id: `${Date.now()}-${file.originalname.split('.')[0]}`, // Use timestamp to avoid conflicts
+            folder: 'blogCovers', // Optional: organize in Cloudinary
+            secure: true, // Use HTTPS for secure URLs
+          },
+          (error, response) => {
+            if (error) {
+              console.error('Error uploading to Cloudinary:', error);
+              throw error; // Let the catch block handle it
+            }
+            blogPic = response.secure_url;
+          }
+        );
+  
+        // Pipe the file buffer to Cloudinary
+        streamifier.createReadStream(file.buffer).pipe(uploadStream);
+  
+        // Wait for the upload to complete
+        await new Promise((resolve, reject) => {
+          uploadStream.on('finish', resolve);
+          uploadStream.on('error', reject);
         });
-            
-              blogPic = response.secure_url;
-            
-              // Cleanup temporary file
-              fs.unlink(file.path, (err) => {
-                if (err) console.error('Error deleting temporary file:', err);
-              });
       }
   
+      // Create the blog in the database
       const blog = await blogSchema.create({
         title,
         content,
         category,
-        CoverImgURL: `${blogPic}`,
+        CoverImgURL: blogPic, // Use new URL or empty string if no file
         createdby: req.user._id,
       });
   
       return res.status(201).redirect("/");
     } catch (error) {
-        console.error("Error uploading to Cloudinary:", err); // Log full error details
-        throw err; // Re-throw to allow your existing error handler to catch it
+      console.error("Error in createBlog:", error); // Log full error details
   
       if (error.name === "ValidationError") {
         return res.status(400).json({ error: error.message });
       }
   
-      return res.status(500).json({ error: "Server error", error });
+      return res.status(500).json({ error: "Server error", details: error.message });
     }
   }
   

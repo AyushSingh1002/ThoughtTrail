@@ -6,18 +6,10 @@ const blogSchema= require("../Model/blog")
 const path = require("path")
 const router = express.Router()
 const Comment = require("../Model/comments")
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, path.resolve("./public/uploads/"))
-    },
-    filename: function (req, file, cb) {
-      const fileName = `${Date.now()}-${file.originalname}`
-      cb(null, fileName)
-    }
-  })
-  
-  const upload = multer({storage})
+const streamifier = require('streamifier');
 
+const upload = multer({ storage: multer.memoryStorage() });
+  
 router.get("/blog",checkUserAuth, (req,res) => res.render("addblogs",{
   user: req.user
 }))
