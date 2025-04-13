@@ -1,30 +1,44 @@
-require('dotenv').config()
-const fs = require("fs")
-const express = require("express")
-const cookieparser = require("cookie-parser")
-const path = require("path")
-const {router} =require("./routes")
-const blogRout =require("./routes/blog")
-const {Connector} = require("./Database/index")
-const CommentRouter = require("./routes/comment")
-const cors = require("cors")
-const port = process.env.port
-const app = express()
-app.use(cors())
-app.use(cookieparser())
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }));
+require('dotenv').config();
+const fs = require("fs");
+const express = require("express");
+const cookieparser = require("cookie-parser");
+const path = require("path");
+const { router } = require("./routes");
+const blogRout = require("./routes/blog");
+const { Connector } = require("./Database/index");
+const CommentRouter = require("./routes/comment");
+const cors = require("cors");
+
+const app = express();
+const port = process.env.port || 3000; // Fallback to port 3000 if env variable is missing
+
+// Middleware
+app.use(cors()); // Enable CORS for all origins (for development purposes)
+app.use(cookieparser()); // Parse cookies
+app.use(express.json()); // Parse JSON requests
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded requests
+
+// Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'public/logopics')));
-app.set("view engine","ejs");
-app.set("views",path.resolve("./views"))
 
-Connector(process.env.MONGODB_URL)
+// Set up view engine
+app.set("view engine", "ejs");
+app.set("views", path.resolve("./views"));
 
-app.use("/", router)
-app.use("/", blogRout)
-app.use("/", CommentRouter)
+// Database connection
+Connector(process.env.MONGODB_URL);
 
+// Routes
+app.use("/", router);
+app.use("/", blogRout);
+app.use("/", CommentRouter);
 
+// Test route to ensure the server is working
+app.get("/test", (req, res) => {
+  res.send("Server is running!");
+});
 
-app.listen(port, () => console.log(`surver is running at port:${port}`))
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is running at port: ${port}`);
+});
