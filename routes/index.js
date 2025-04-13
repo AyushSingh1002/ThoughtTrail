@@ -9,10 +9,12 @@ const cloudinary = require("../lib/cloudinary.js")
 const {createUserToken} = require("../Services/Auth")
 const fs = require("fs")
 const { console } = require("inspector")
-const streamifier = require('streamifier');
+
 const router = express.Router()
 
-const upload = multer({ storage: multer.memoryStorage() });
+
+
+  const upload = multer({storage : multer.memoryStorage()})
 
 
 
@@ -79,30 +81,17 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
     let profilePicUrl = "";
 
     if (file) {
-      // Stream file buffer to Cloudinary
-      const uploadStream = cloudinary.uploader.upload_stream(
-        {
-          public_id: `${Date.now()}-${file.originalname.split('.')[0]}`, // Use timestamp to avoid conflicts
-          folder: 'profilePics', // Optional: organize in Cloudinary
-          secure: true, // Use HTTPS for secure URLs
-        },
-        (error, response) => {
-          if (error) {
-            console.error('Error uploading to Cloudinary:', error);
-            throw error; // Let the catch block handle it
-          }
-          profilePicUrl = response.secure_url;
-        }
-      );
+      // Convert buffer to base64 for Cloudinary upload
+      const base64String = file.buffer.toString('base64');
+      const dataUri = `data:${file.mimetype};base64,${base64String}`;
 
-      // Pipe the file buffer to Cloudinary
-      streamifier.createReadStream(file.buffer).pipe(uploadStream);
-
-      // Wait for the upload to complete (since upload_stream is async)
-      await new Promise((resolve, reject) => {
-        uploadStream.on('finish', resolve);
-        uploadStream.on('error', reject);
+      // Upload directly to Cloudinary
+      const response = await cloudinary.uploader.upload(dataUri, {
+        public_id: `${Date.now()}-${file.originalname.split('.')[0]}`,
+        secure: false,
       });
+
+      profilePicUrl = response.secure_url;
     }
 
     // Update user in the database
@@ -113,17 +102,15 @@ router.post("/profile/:id", checkUserAuth, upload.single("file-input"), async (r
         email: body.email,
         Bio: body.Bio,
         lastName: body.lastName,
-        ProfilePic: profilePicUrl || body.ProfilePic, // Use new URL or keep existing
+        ProfilePic: `${profilePicUrl}` || body.ProfilePic,
       },
-      { new: true } // Return the updated document
+      { new: true }
     );
 
-    console.log("Updated user:", updatedUser); // Log updated user
-
+    console.log("Updated user:", updatedUser);
     res.redirect(`/profile/${req.user._id}`);
   } catch (error) {
-    console.error("Error in profile update:", error); // Log full error details
-    // Optionally render an error page or redirect with a message
+    console.error("Error in profile update:", error);
     res.status(500).send("Error updating profile");
   }
 });

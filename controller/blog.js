@@ -5,35 +5,22 @@ const fs = require("fs");
 async function createBlog(req, res) {
     try {
       const { title, content, category } = req.body;
-      const file = req.file; // File is in memory (buffer)
+      const file = req.file;
   
       let blogPic = "";
   
       if (file) {
-        // Stream file buffer to Cloudinary
-        const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            public_id: `${Date.now()}-${file.originalname.split('.')[0]}`, // Use timestamp to avoid conflicts
-            folder: 'blogCovers', // Optional: organize in Cloudinary
-            secure: true, // Use HTTPS for secure URLs
-          },
-          (error, response) => {
-            if (error) {
-              console.error('Error uploading to Cloudinary:', error);
-              throw error; // Let the catch block handle it
-            }
-            blogPic = response.secure_url;
-          }
-        );
+        // Convert buffer to base64 for Cloudinary upload
+        const base64String = file.buffer.toString('base64');
+        const dataUri = `data:${file.mimetype};base64,${base64String}`;
   
-        // Pipe the file buffer to Cloudinary
-        streamifier.createReadStream(file.buffer).pipe(uploadStream);
-  
-        // Wait for the upload to complete
-        await new Promise((resolve, reject) => {
-          uploadStream.on('finish', resolve);
-          uploadStream.on('error', reject);
+        // Upload directly to Cloudinary
+        const response = await cloudinary.uploader.upload(dataUri, {
+          public_id: `${Date.now()}-${file.originalname.split('.')[0]}`,
+          secure: false,
         });
+  
+        blogPic = response.secure_url;
       }
   
       // Create the blog in the database
@@ -41,18 +28,16 @@ async function createBlog(req, res) {
         title,
         content,
         category,
-        CoverImgURL: blogPic, // Use new URL or empty string if no file
+        CoverImgURL: `${blogPic}`,
         createdby: req.user._id,
       });
   
       return res.status(201).redirect("/");
     } catch (error) {
-      console.error("Error in createBlog:", error); // Log full error details
-  
+      console.error("Error in createBlog:", error);
       if (error.name === "ValidationError") {
         return res.status(400).json({ error: error.message });
       }
-  
       return res.status(500).json({ error: "Server error", details: error.message });
     }
   }

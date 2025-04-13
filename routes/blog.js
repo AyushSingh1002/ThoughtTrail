@@ -6,7 +6,6 @@ const blogSchema= require("../Model/blog")
 const path = require("path")
 const router = express.Router()
 const Comment = require("../Model/comments")
-const streamifier = require('streamifier');
 
 const upload = multer({ storage: multer.memoryStorage() });
   
