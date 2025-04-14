@@ -184,57 +184,56 @@ router.post("/settings", checkUserAuth, async (req, res) => {
 router.post("/follow/:id", checkUserAuth, followUsers)
 
 router.post('/verify-otp', async (req, res) => {
-  console.log("Reached /verify-otp route");
   try {
     const { email, otp } = req.body;
-    console.log("email:", email, "otp:", otp);
+    const tempUserData = JSON.parse(req.cookies.tempUserData || '{}');
+    const tempOTPData = JSON.parse(req.cookies.tempOTP || '{}');
 
-    const user = await userSchema.findOne({ email });
-    if (!user || !user.otp || !user.otpExpiry) {
-      console.log("Invalid user or OTP");
-      return res.status(400).render('verify-otp', { email, error: 'Invalid or expired OTP' });
+    // Validate temporary data
+    if (!tempUserData.email || !tempOTPData.otp || !tempOTPData.expires) {
+      return res.status(400).json({ error: 'Invalid or missing verification data' });
     }
 
-    if (user.otpExpiry < Date.now()) {
-      console.log("OTP expired");
-      user.otp = undefined;
-      user.otpExpiry = undefined;
-      await user.save();
-      return res.status(400).render('verify-otp', { email, error: 'OTP has expired' });
+    // Check if OTP is expired
+    if (new Date(tempOTPData.expires) < Date.now()) {
+      return res.status(400).render('verifyOtp', { error: 'OTP expired', email: tempUserData.email });
     }
 
-    const isMatch = await bcrypt.compare(otp, user.otp); // Corrected comparison
+    // Verify OTP
+    const isMatch = await bcrypt.compare(otp, tempOTPData.otp);
     if (!isMatch) {
-      console.log("Invalid OTP");
-      return res.status(400).render('verify-otp', { email, error: 'Invalid OTP' });
+      return res.status(400).render('verifyOtp', { error: 'Invalid OTP', email: tempUserData.email });
     }
 
-    user.otp = undefined;
-    user.otpExpiry = undefined;
-    await user.save();
+    // Create user in database only after OTP verification
+    const user = await userSchema.create({
+      userName: tempUserData.userName,
+      email: tempUserData.email,
+      password: tempUserData.hashedPassword,
+    });
 
+    // Clear temporary cookies
+    res.clearCookie('tempUserData');
+    res.clearCookie('tempOTP');
+
+    // Set session cookie (e.g., 24 hours or with "Remember Me")
+    const rememberMe = req.body.rememberMe === 'on';
+    const maxAge = rememberMe ? 7 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000; // 7 days or 24 hours
     const token = createUserToken(user);
-    console.log('token:', token);
+    res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge,
+    });
 
-    if (token) {
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
-        maxAge: 24 * 60 * 60 * 1000,
-      });
-      console.log('Cookie set');
-    } else {
-      console.log('Token not generated');
-      return res.status(400).json({ error: 'Token generation failed' });
-    }
 
-    // Optionally render success or redirect
-    return res.redirect('/', );
-    // Or redirect: return res.redirect('/');
+    return res.redirect('/'); // Redirect to home page after successful signup
   } catch (error) {
     console.error('OTP verification error:', error);
-    return res.status(500).render('verify-otp', { email, error: 'Server error' });
+    if (error.code === 11000) {
+      return res.status(409).json({ message: 'Email already registered' });
+    }
+    return res.status(500).json({ error: 'Server error' });
   }
 });
 

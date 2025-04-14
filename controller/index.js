@@ -12,32 +12,42 @@ async function createUser(req, res) {
     }
   
     try {
-      // Create user with hashed password
+      // Hash the password
       const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await userSchema.create({
+  
+      // Prepare temporary user data
+      const tempUserData = {
         userName,
         email,
-        password: hashedPassword, // Store hashed password
-      });
+        hashedPassword,
+      };
+
+      res.cookie("tokenV" , JSON.stringify({userEmail : email}), {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        maxAge: 5 * 60 * 1000, // 5 minutes in milliseconds
+      })
   
-      // Set temporary cookie for email verification (expires in 5 minutes)
-      res.cookie('tokenV', JSON.stringify({ userEmail: email }), {
+      // Set temporary cookie with user data (expires in 5 minutes)
+      res.cookie('tempUserData', JSON.stringify(tempUserData), {
         httpOnly: true,
         sameSite: 'lax', // Prevent CSRF attacks
         maxAge: 5 * 60 * 1000, // 5 minutes in milliseconds
       });
   
-      // Generate and store OTP
+      // Generate and send OTP
       const otp = generateOTP();
       const hashedOTP = await bcrypt.hash(otp, 10);
       const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5-minute expiry
   
-      user.otp = hashedOTP;
-      user.otpExpiry = otpExpires;
-      await user.save(); // Ensure save is awaited
+      // Store OTP in a temporary cookie (instead of database)
+      res.cookie('tempOTP', JSON.stringify({ otp: hashedOTP, expires: otpExpires }), {
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 5 * 60 * 1000,
+      });
   
-      // Log OTP for debugging (avoid in production)
-
   
       // Send OTP via email asynchronously
       sendOTPEmail(email, otp).catch((emailError) => {
@@ -46,15 +56,9 @@ async function createUser(req, res) {
       });
   
       // Render verification page
-      return res.render('verify-otp', { email });
+      return res.render('verifyOtp', { email });
     } catch (error) {
-      console.error('User creation error:', error);
-  
-      // Handle specific errors (e.g., duplicate email)
-      if (error.code === 11000) {
-        return res.status(409).json({ message: 'Email already registered' });
-      }
-  
+      console.error('User creation setup error:', error);
       return res.status(500).json({ message: 'Internal Server Error' });
     }
   }
