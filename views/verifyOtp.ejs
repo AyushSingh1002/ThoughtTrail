@@ -1,0 +1,382 @@
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify OTP</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #0d0d0d;
+      color: #e0e0e0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    .otp-container {
+      background: rgba(20, 20, 20, 0.9);
+      backdrop-filter: blur(8px);
+      padding: clamp(1.5rem, 5vw, 2rem);
+      border-radius: 12px;
+      width: 100%;
+      max-width: min(90vw, 400px);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      animation: slideIn 0.6s ease-out forwards;
+      position: relative;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h1 {
+      font-size: clamp(1.4rem, 5vw, 1.8rem);
+      font-weight: 600;
+      color: #ffffff;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    .email-info {
+      font-size: clamp(0.75rem, 3vw, 0.85rem);
+      color: #a0a0a0;
+      text-align: center;
+      margin-bottom: clamp(1rem, 4vw, 1.5rem);
+    }
+    .email {
+      color: #60a5fa;
+      font-weight: 500;
+    }
+    .otp-inputs {
+      display: flex;
+      gap: clamp(0.4rem, 2vw, 0.6rem);
+      justify-content: center;
+      margin-bottom: clamp(1rem, 4vw, 1.5rem);
+    }
+    .otp-input {
+      width: clamp(35px, 11vw, 45px);
+      height: clamp(40px, 14vw, 55px);
+      background: #1a1a1a;
+      border: 2px solid #3a3a3a;
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: clamp(1.2rem, 5vw, 1.8rem);
+      font-weight: 500;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .otp-input:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+    }
+    .otp-input:valid {
+      border-color: #10b981;
+    }
+    button {
+      width: 100%;
+      background: #60a5fa;
+      border: none;
+      padding: clamp(0.7rem, 3vw, 0.9rem);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: clamp(0.9rem, 3.5vw, 1rem);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      position: relative;
+    }
+    button:hover:not(:disabled) {
+      background: #3b82f6;
+      transform: translateY(-2px);
+    }
+    button:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    button:disabled {
+      background: #4b5563;
+      cursor: not-allowed;
+    }
+    .error {
+      color: #ef4444;
+      font-size: clamp(0.7rem, 3vw, 0.85rem);
+      text-align: center;
+      margin-top: clamp(0.5rem, 2vw, 1rem);
+      animation: shake 0.3s ease;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-3px); }
+      75% { transform: translateX(3px); }
+    }
+    .resend {
+      text-align: center;
+      margin-top: clamp(0.5rem, 2vw, 1rem);
+      font-size: clamp(0.7rem, 3vw, 0.85rem);
+      color: #a0a0a0;
+    }
+    .resend a {
+      color: #60a5fa;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .resend a:hover {
+      text-decoration: underline;
+    }
+    /* Success animation */
+    .success-overlay {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(16, 185, 129, 0.1);
+      border-radius: 12px;
+      justify-content: center;
+      align-items: center;
+      animation: fadeInSuccess 0.4s ease forwards;
+    }
+    .success-overlay.show {
+      display: flex;
+    }
+    @keyframes fadeInSuccess {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .checkmark {
+      width: 50px;
+      height: 50px;
+      position: relative;
+      transform: scale(0);
+      animation: growCheck 0.3s ease forwards;
+    }
+    @keyframes growCheck {
+      to { transform: scale(1); }
+    }
+    .checkmark::before,
+    .checkmark::after {
+      content: '';
+      position: absolute;
+      background: #10b981;
+      border-radius: 2px;
+    }
+    .checkmark::before {
+      width: 12px;
+      height: 3px;
+      top: 28px;
+      left: 15px;
+      transform: rotate(45deg);
+      animation: drawCheck1 0.15s ease forwards;
+    }
+    .checkmark::after {
+      width: 24px;
+      height: 3px;
+      top: 23px;
+      left: 22px;
+      transform: rotate(-45deg);
+      animation: drawCheck2 0.15s ease forwards 0.1s;
+    }
+    @keyframes drawCheck1 {
+      from { width: 0; }
+      to { width: 12px; }
+    }
+    @keyframes drawCheck2 {
+      from { width: 0; }
+      to { width: 24px; }
+    }
+    .success .otp-inputs,
+    .success button,
+    .success .email-info,
+    .success h1,
+    .success .resend,
+    .success .error {
+      opacity: 0;
+      pointer-events: none;
+    }
+    /* Loader styles */
+    .loader {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(59, 130, 246, 0.3);
+      border-top-color: #60a5fa;
+      border-radius: 50%;
+      animation: spin 1s linear forwards;
+    }
+    @keyframes spin {
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    .loading .otp-inputs,
+    .loading button,
+    .loading .email-info,
+    .loading h1,
+    .loading .resend,
+    .loading .success-overlay {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loading .loader {
+      display: block;
+    }
+    @media (max-width: 360px) {
+      .otp-input {
+        width: 32px;
+        height: 40px;
+        font-size: 1.1rem;
+      }
+      .otp-inputs {
+        gap: 0.3rem;
+      }
+      .checkmark {
+        width: 40px;
+        height: 40px;
+      }
+      .checkmark::before {
+        width: 10px;
+        height: 2px;
+        top: 23px;
+        left: 12px;
+      }
+      .checkmark::after {
+        width: 20px;
+        height: 2px;
+        top: 19px;
+        left: 18px;
+      }
+      .loader {
+        width: 32px;
+        height: 32px;
+        border-width: 3px;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="otp-container">
+    <h1>Verify OTP</h1>
+    <p class="email-info">Sent to <span class="email"><%= email %></span></p>
+    <form action="/verify-otp" method="POST" id="otp-form">
+      <input type="hidden" name="email" value="<%= email %>">
+      <div class="otp-inputs">
+        <input type="text" class="otp-input" maxlength="1" pattern="\d" required>
+        <input type="text" class="otp-input" maxlength="1" pattern="\d" required>
+        <input type="text" class="otp-input" maxlength="1" pattern="\d" required>
+        <input type="text" class="otp-input" maxlength="1" pattern="\d" required>
+        <input type="text" class="otp-input" maxlength="1" pattern="\d" required>
+        <input type="text" class="otp-input" maxlength="1" pattern="\d" required>
+        <input type="hidden" name="otp" id="otp-hidden">
+      </div>
+      <button type="submit" id="verify-btn" disabled>Verify</button>
+    </form>
+    <div class="success-overlay">
+      <div class="checkmark"></div>
+      
+    </div>
+    <div class="loader"></div>
+    <% if (locals.error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+    <p class="resend">
+      Didn't get it? <a href="/resend-otp">Resend OTP</a>
+    </p>
+  </div>
+
+  <script>
+    const inputs = document.querySelectorAll('.otp-input');
+    const hiddenInput = document.getElementById('otp-hidden');
+    const form = document.getElementById('otp-form');
+    const button = document.getElementById('verify-btn');
+    const container = document.querySelector('.otp-container');
+    const successOverlay = document.querySelector('.success-overlay');
+
+    // Auto-move cursor
+    inputs.forEach((input, index) => {
+      input.addEventListener('input', () => {
+        if (input.value.match(/\d/)) {
+          if (index < inputs.length - 1) {
+            setTimeout(() => inputs[index + 1].focus(), 0);
+          } else {
+            input.blur();
+          }
+        } else {
+          input.value = '';
+        }
+        updateHiddenInput();
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !input.value && index > 0) {
+          inputs[index - 1].focus();
+          inputs[index - 1].value = '';
+          updateHiddenInput();
+        }
+      });
+
+      input.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const paste = e.clipboardData.getData('text').slice(0, 6);
+        let currentIndex = index;
+        for (let i = 0; i < paste.length && currentIndex < inputs.length; i++) {
+          if (paste[i].match(/\d/)) {
+            inputs[currentIndex].value = paste[i];
+            currentIndex++;
+          }
+        }
+        if (currentIndex < inputs.length) {
+          inputs[currentIndex].focus();
+        } else {
+          inputs[inputs.length - 1].blur();
+        }
+        updateHiddenInput();
+      });
+    });
+
+    // Update hidden input and button state
+    function updateHiddenInput() {
+      const otp = Array.from(inputs).map(i => i.value).join('');
+      hiddenInput.value = otp;
+      button.disabled = otp.length !== 6 || !otp.match(/^\d{6}$/);
+    }
+
+
+    // Handle form submission with success, loader, and redirect
+    form.addEventListener('submit', (e) => {
+      const otp = hiddenInput.value;
+      if (!otp.match(/^\d{6}$/)) {
+        inputs.forEach(input => {
+          input.style.borderColor = '#ef4444';
+          setTimeout(() => input.style.borderColor = '#3a3a3a', 500);
+        });
+        return;
+      }
+
+      // Show success animation
+      container.classList.add('success');
+      successOverlay.classList.add('show');
+
+      // After success animation (0.6s), show loader
+      setTimeout(() => {
+        container.classList.remove('success');
+        container.classList.add('loading');
+        successOverlay.classList.remove('show');
+      }, 600);
+    });
+
+    // Auto-focus first input
+    window.addEventListener('load', () => {
+      inputs[0].focus();
+    });
+  </script>
+</body>
+</html>

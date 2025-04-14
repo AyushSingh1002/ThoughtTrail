@@ -8,7 +8,9 @@ function createUserToken(user) {
         userName : user.userName,
         ProfilePic: user.ProfilePic
     }
-    const token = jwt.sign(payload,secret)
+    const token = jwt.sign(payload,secret ,{
+        expiresIn: "3d"
+    })
     return token
 }
 

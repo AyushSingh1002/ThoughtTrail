@@ -8,7 +8,9 @@ const userSchema = require("../Model/index")
 const cloudinary = require("../lib/cloudinary.js")
 const {createUserToken} = require("../Services/Auth")
 const fs = require("fs")
-const { console } = require("inspector")
+const bcrypt = require("bcrypt")
+const {generateOTP, sendOTPEmail} = require("../lib/emailSender.js")
+const { ResendOtp } = require("../Services/verifyOtp.js")
 
 const router = express.Router()
 
@@ -21,28 +23,41 @@ const router = express.Router()
 router.get("/signup", (req,res) => res.render("signUp"))
 router.post("/signup", createUser)
 router.get("/login", (req,res) => res.render("log"))
-router.post("/login", async (req,res)=>{
-    const body = req.body
-    const email = body.username;
-    const {password} = body
-    console.log(email, password)
-    try {
-        const user = await userSchema.findOne({email, password})
-        if(!user){
-            return  res.render({error : "password or email is wrong"})
-        }
-        const token = createUserToken(user)
-        return res.cookie("token", token, {
-          httpOnly: true,      
-          sameSite: "Strict",
-          maxAge: 7 * 24 * 60 * 60 * 1000, 
-        }).redirect("/")
-    } catch (error) {
-        return  res.render("signUp",{
-            errors: "incorrect email or password"
-        })
+router.post('/login', async (req, res) => {
+  // Extract and validate request body
+  const { username: email, password } = req.body || {};
+
+  // Basic input validation
+  if (!email || !password) {
+    return res.render('log', { errors: 'Please provide both email and password' });
+  }
+
+  try {
+    // Find user by email
+    const user = await userSchema.findOne({ email });
+    if (!user) {
+      return res.render('log', { errors: 'Invalid credentials' });
     }
-})
+
+    // Compare provided password with stored hashed password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.render('log', { errors: 'Invalid credentials' });
+    }
+
+    const token = createUserToken(user);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
+    }).redirect("/");
+  } catch (error) {
+    console.error('Login error:', error);
+    return res.render('log', { errors: 'An error occurred during login' });
+  }
+});
 
 router.get("/",checkUserAuth,async(req,res)=>{
     const blog = await blogSchema.find({})
@@ -166,6 +181,84 @@ router.post("/settings", checkUserAuth, async (req, res) => {
   res.redirect("/login");
 });
 router.post("/follow/:id", checkUserAuth, followUsers)
+
+router.post('/verify-otp', async (req, res) => {
+  console.log("Reached /verify-otp route");
+  try {
+    const { email, otp } = req.body;
+    console.log("email:", email, "otp:", otp);
+
+    const user = await userSchema.findOne({ email });
+    if (!user || !user.otp || !user.otpExpiry) {
+      console.log("Invalid user or OTP");
+      return res.status(400).render('verify-otp', { email, error: 'Invalid or expired OTP' });
+    }
+
+    if (user.otpExpiry < Date.now()) {
+      console.log("OTP expired");
+      user.otp = undefined;
+      user.otpExpiry = undefined;
+      await user.save();
+      return res.status(400).render('verify-otp', { email, error: 'OTP has expired' });
+    }
+
+    const isMatch = await bcrypt.compare(otp, user.otp); // Corrected comparison
+    if (!isMatch) {
+      console.log("Invalid OTP");
+      return res.status(400).render('verify-otp', { email, error: 'Invalid OTP' });
+    }
+
+    user.otp = undefined;
+    user.otpExpiry = undefined;
+    await user.save();
+
+    const token = createUserToken(user);
+    console.log('token:', token);
+
+    if (token) {
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+      console.log('Cookie set');
+    } else {
+      console.log('Token not generated');
+      return res.status(400).json({ error: 'Token generation failed' });
+    }
+
+    // Optionally render success or redirect
+    return res.redirect('/', );
+    // Or redirect: return res.redirect('/');
+  } catch (error) {
+    console.error('OTP verification error:', error);
+    return res.status(500).render('verify-otp', { email, error: 'Server error' });
+  }
+});
+
+router.get("/resend-otp", async (req, res) => {
+  try {
+    const tokenV = req.cookies.tokenV; // Get tokenV cookie
+    if (!tokenV) {
+      return res.status(400).render('verifyOtp', { error: 'Email not found' });
+    }
+
+    const { userEmail } = JSON.parse(tokenV); // Parse the cookie to get email
+    if (!userEmail) {
+      return res.status(400).render('verifyOtp', { error: 'Invalid email data' });
+    }
+
+    // Call the ResendOtp function
+    await ResendOtp(userEmail); // Assuming ResendOtp is an async function
+    console.log("OTP resent to:", userEmail);
+    // Success response
+    res.render('verifyOtp', { email: userEmail, success: 'New OTP sent to your email' });
+  } catch (error) {
+    console.error('Error resending OTP:', error);
+    res.status(500).render('verifyOtp', { error: 'Server error', email: req.body?.email || '' });
+  }
+});
 
 
 module.exports = {router}

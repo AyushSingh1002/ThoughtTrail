@@ -42,7 +42,7 @@
       top: 0;
       left: 0;
       width: 100%;
-      padding: 15px 100px;
+      padding: clamp(10px, 2.5vw, 15px) clamp(20px, 5vw, 100px);
       background: var(--bg-nav);
       backdrop-filter: blur(90px);
       box-shadow: var(--shadow-sm);
@@ -59,7 +59,7 @@
     }
 
     .nav .logo {
-      font-size: 1.5rem;
+      font-size: clamp(1.2rem, 2.5vw, 1.5rem);
       font-weight: 600;
       color: var(--text-white);
       text-decoration: none;
@@ -77,13 +77,13 @@
       display: flex;
       align-items: center;
       list-style: none;
-      gap: 30px;
+      gap: clamp(15px, 2vw, 30px);
     }
 
     .nav-links li a {
       color: var(--text-white);
       text-decoration: none;
-      font-size: 0.95rem;
+      font-size: clamp(0.85rem, 1.5vw, 0.95rem);
       font-weight: 400;
       position: relative;
       transition: var(--transition);
@@ -110,13 +110,13 @@
 
     .search-box {
       position: relative;
-      height: 40px;
-      max-width: 400px;
+      height: clamp(35px, 5vw, 40px);
+      max-width: clamp(250px, 30vw, 400px);
       width: 100%;
       opacity: 0;
       pointer-events: none;
       transition: var(--transition);
-      margin-left: 20px;
+      margin-left: clamp(10px, 2vw, 20px);
     }
 
     .nav.openSearch .search-box {
@@ -132,8 +132,8 @@
       border-radius: 8px;
       background: var(--search-bg);
       color: var(--text-white);
-      padding: 0 15px 0 45px;
-      font-size: 0.9rem;
+      padding: 0 clamp(10px, 2vw, 15px) 0 clamp(40px, 5vw, 45px);
+      font-size: clamp(0.8rem, 1.5vw, 0.9rem);
       transition: var(--transition);
     }
 
@@ -143,11 +143,11 @@
 
     .search-box .search-icon {
       position: absolute;
-      left: 15px;
+      left: clamp(10px, 2vw, 15px);
       top: 50%;
       transform: translateY(-50%);
       color: var(--accent);
-      font-size: 1.2rem;
+      font-size: clamp(1rem, 2vw, 1.2rem);
       cursor: pointer;
       transition: var(--transition);
     }
@@ -159,8 +159,8 @@
       width: 100%;
       background: var(--bg-mobile);
       border-radius: 8px;
-      margin-top: 5px;
-      max-height: 200px;
+      margin-top: clamp(5px, 1vw, 10px);
+      max-height: clamp(150px, 20vw, 200px);
       overflow-y: auto;
       display: none;
       box-shadow: var(--shadow-sm);
@@ -172,9 +172,9 @@
     }
 
     .search-suggestions li {
-      padding: 10px 15px;
+      padding: clamp(8px, 1.5vw, 10px) clamp(12px, 2vw, 15px);
       color: var(--text-white);
-      font-size: 0.9rem;
+      font-size: clamp(0.8rem, 1.5vw, 0.9rem);
       cursor: pointer;
       transition: var(--transition);
     }
@@ -188,7 +188,7 @@
     .nav-close-btn {
       display: none;
       color: var(--text-white);
-      font-size: 1.5rem;
+      font-size: clamp(1.2rem, 2.5vw, 1.5rem);
       cursor: pointer;
       transition: var(--transition);
     }
@@ -205,8 +205,8 @@
     }
 
     .avatar {
-      width: 40px;
-      height: 40px;
+      width: clamp(30px, 5vw, 40px);
+      height: clamp(30px, 5vw, 40px);
       border-radius: 50%;
       border: 2px solid var(--text-white);
       box-shadow: 0 0 5px var(--shadow-sm);
@@ -227,8 +227,8 @@
       background: var(--bg-mobile);
       border-radius: 8px;
       box-shadow: var(--shadow-sm);
-      min-width: 180px;
-      margin-top: 10px;
+      min-width: clamp(150px, 20vw, 180px);
+      margin-top: clamp(8px, 1.5vw, 10px);
       opacity: 0;
       visibility: hidden;
       transform: translateY(-10px);
@@ -244,15 +244,15 @@
 
     .dropdown ul {
       list-style: none;
-      padding: 10px 0;
+      padding: clamp(8px, 1.5vw, 10px) 0;
     }
 
     .dropdown li a {
       display: block;
-      padding: 10px 20px;
+      padding: clamp(8px, 1.5vw, 10px) clamp(15px, 2.5vw, 20px);
       color: var(--text-white);
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: clamp(0.8rem, 1.5vw, 0.9rem);
       transition: var(--transition);
     }
 
@@ -267,9 +267,9 @@
       right: -5px;
       background: var(--alert-color, #e57373);
       color: var(--text-white);
-      font-size: 0.7rem;
-      width: 18px;
-      height: 18px;
+      font-size: clamp(0.6rem, 1.2vw, 0.7rem);
+      width: clamp(15px, 2.5vw, 18px);
+      height: clamp(15px, 2.5vw, 18px);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -279,9 +279,9 @@
 
     .theme-toggle {
       color: var(--text-white);
-      font-size: 1.2rem;
+      font-size: clamp(1rem, 2vw, 1.2rem);
       cursor: pointer;
-      margin-left: 20px;
+      margin-left: clamp(10px, 2vw, 20px);
       transition: var(--transition);
     }
 
@@ -289,22 +289,13 @@
       color: var(--accent);
     }
 
-    /* Responsive */
-    @media screen and (max-width: 1160px) {
+    /* Enhanced Responsive Design */
+    @media screen and (max-width: 1024px) {
       .nav {
-        padding: 15px 60px;
+        padding: clamp(10px, 2vw, 15px) clamp(15px, 4vw, 60px);
       }
       .search-box {
-        max-width: 350px;
-      }
-    }
-
-    @media screen and (max-width: 950px) {
-      .nav {
-        padding: 15px 40px;
-      }
-      .search-box {
-        max-width: 300px;
+        max-width: clamp(200px, 25vw, 350px);
       }
     }
 
@@ -315,7 +306,7 @@
       }
 
       .nav {
-        padding: 15px 20px;
+        padding: clamp(10px, 2vw, 15px) clamp(10px, 3vw, 20px);
       }
 
       .nav-links {
@@ -323,10 +314,12 @@
         top: 0;
         left: -100%;
         height: 100%;
-        width: 280px;
-        padding-top: 80px;
+        width: clamp(200px, 50vw, 280px);
+        padding-top: clamp(60px, 10vw, 80px);
         flex-direction: column;
-        background: transparent;
+        background: var(--bg-translucent);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         box-shadow: var(--shadow-md);
         transition: left 0.4s ease;
         z-index: 100;
@@ -338,63 +331,68 @@
 
       .nav-links li {
         width: 100%;
-        background: rgba(0, 0, 0, 0.3); /* darker + 80% opacity */
-  backdrop-filter: blur(20px); /* nice blur effect */
-  -webkit-backdrop-filter: blur(20px); /* Safari support */
-
-        padding: 10px 20px;
+        padding: clamp(10px, 2vw, 15px) clamp(15px, 3vw, 20px);
+        background: rgba(0, 0, 0, 0.3);
       }
 
       .nav-links li a {
-        font-size: 1rem;
+        font-size: clamp(0.9rem, 2vw, 1rem);
       }
 
       .nav-close-btn {
         position: absolute;
-        top: 20px;
-        right: 20px;
+        top: clamp(15px, 3vw, 20px);
+        right: clamp(15px, 3vw, 20px);
       }
 
       .search-box {
         position: absolute;
-        top: calc(100% + 10px);
+        top: calc(100% + clamp(5px, 1vw, 10px));
         left: 50%;
         transform: translateX(-50%);
-        max-width: calc(100% - 40px);
+        max-width: clamp(180px, 80vw, 300px);
         margin-left: 0;
         box-shadow: var(--shadow-sm);
       }
 
       .dropdown {
-        width: 100%;
-        right: 20px;
+        width: clamp(150px, 80vw, 180px);
+        right: clamp(10px, 2vw, 20px);
       }
 
       .theme-toggle {
-        margin-left: 10px;
+        margin-left: clamp(5px, 1.5vw, 10px);
       }
     }
 
     @media screen and (max-width: 480px) {
       .nav {
-        padding: 10px 15px;
+        padding: clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 15px);
       }
 
       .nav .logo {
-        font-size: 1.25rem;
+        font-size: clamp(1rem, 2.5vw, 1.25rem);
       }
 
       .avatar {
-        width: 35px;
-        height: 35px;
+        width: clamp(25px, 5vw, 35px);
+        height: clamp(25px, 5vw, 35px);
       }
 
       .search-box {
-        max-width: calc(100% - 30px);
+        max-width: clamp(150px, 70vw, 250px);
       }
 
       .nav-links {
-        width: 250px;
+        width: clamp(180px, 70vw, 250px);
+      }
+
+      .notification-badge {
+        top: -3px;
+        right: -3px;
+        width: clamp(12px, 2vw, 15px);
+        height: clamp(12px, 2vw, 15px);
+        font-size: clamp(0.5rem, 1vw, 0.6rem);
       }
     }
   </style>
