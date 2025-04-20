@@ -13,7 +13,13 @@ const addComment = async(req,res) => {
             onPost: post,
             creater: user,
         })
-        res.status(200).redirect(`/blog/${post}`)
+        const populatedComment = await newComment.populate("creater", "userName ProfilePic");
+        res.status(200).json({ 
+            creater: user,
+            comment: populatedComment, 
+            message: "Comment added successfully" 
+          });
+          
     } catch (error) {
         console.log("something went wrong in addComment",error)
     }

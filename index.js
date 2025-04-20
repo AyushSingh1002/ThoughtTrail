@@ -28,15 +28,12 @@ app.set("views", path.resolve("./views"));
 // Database connection
 Connector(process.env.MONGODB_URL);
 
+
 // Routes
 app.use("/", router);
 app.use("/", blogRout);
 app.use("/", CommentRouter);
 
-// Test route to ensure the server is working
-app.get("/test", (req, res) => {
-  res.send("Server is running!");
-});
 
 // Start the server
 app.listen(port, () => {

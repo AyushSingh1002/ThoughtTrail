@@ -535,15 +535,16 @@
 
     <!-- Follow Button -->
     <% if (locals.user) { %>
-    <% if (curUser._id.toString() !== user._id.toString()) { %>
-      <form style="display: flex; justify-content: center; padding-bottom: 10px;" action="/follow/<%= curUser._id %>" method="POST" onsubmit="handleFollow(event, this)">
-        <button type="submit" class="btn-follow" aria-label="Follow or Unfollow">
-          <i class="fas fa-user-plus" aria-hidden="true"></i>
-          <span><% if (curUser.followers.includes(user._id)) { %>Unfollow<% } else { %>Follow<% } %></span>
-        </button>
-      </form>
-    <% } %>
-    <% } %>
+  <% if (curUser._id.toString() !== user._id.toString()) { %>
+    <form style="display: flex; justify-content: center; padding-bottom: 10px;" action="/follow/<%= curUser._id %>" method="POST">
+      <button type="button" class="btn-follow" aria-label="Follow or Unfollow" onclick="handleFollow(event, this)">
+        <i class="fas fa-user-plus" aria-hidden="true"></i>
+        <span><% if (curUser.followers.includes(user._id)) { %>Unfollow<% } else { %>Follow<% } %></span>
+      </button>
+    </form>
+  <% } %>
+<% } %>
+
 
     <!-- Footer -->
     <div style="display: flex; justify-content: center;" class="footer">
@@ -585,14 +586,45 @@
     }
 
     // Follow Button Loading State
-    function handleFollow(event, form) {
-      event.preventDefault();
-      const button = form.querySelector('.btn-follow');
-      button.classList.add('loading');
-      setTimeout(() => {
-        form.submit();
-      }, 1000); // Simulate async request
-    }
+    function handleFollow(event, button) {
+  event.preventDefault();
+
+  const form = button.closest('form');
+  const formData = new FormData(form);
+
+  // Disable the button to prevent multiple clicks
+  button.disabled = true;
+  button.style.opacity = '0.6';
+
+  fetch(form.action, {
+    method: form.method,
+    body: formData,
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json(); // Expecting a JSON response
+    })
+    .then(data => {
+      // Update the button text based on follow status
+      const span = button.querySelector('span');
+      if (data.followed) {
+        span.textContent = 'Unfollow';
+      } else {
+        span.textContent = 'Follow';
+      }
+    })
+    .catch(error => {
+      console.error('Error during follow action:', error);
+    })
+    .finally(() => {
+      // Re-enable the button
+      button.disabled = false;
+      button.style.opacity = '1';
+    });
+}
+
 
     // Particle Background
     const canvas = document.getElementById('particles');

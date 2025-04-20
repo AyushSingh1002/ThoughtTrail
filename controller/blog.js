@@ -42,35 +42,57 @@ async function createBlog(req, res) {
     }
   }
   
-async function reactOnBlog(req, res) {
+  async function reactOnBlog(req, res) {
     const blogId = req.params.id;
-    const userId = req.user._id;
+    const userId = req.user._id; // Assuming user information is available in `req.user`
 
-   try {
-    const curBlog = await blogSchema.findById(blogId)
-    
-    if(!curBlog || !userId) {
-        return res.status(400).json({ message: "Blog ID and User ID are required" });
-    }
-    
-    if (curBlog.likes === null) {
-        curBlog.likes = []; // Initialize likes if it doesn't exist
-    }
-    if (curBlog.likes.includes(userId)) {
-        curBlog.likes.pull(userId);
-    } else {
-        curBlog.likes.push(userId);
-    }
-    await curBlog.save();
-    return res.status(200).redirect(`/blog/${blogId}`);
-   } catch (error) {
+    try {
+        // Fetch the current blog
+        const curBlog = await blogSchema.findById(blogId);
+
+        if (!curBlog) {
+            return res.status(404).json({ message: "Blog not found" });
+        }
+
+        // Check if userId exists (should be a valid user, this is usually handled by authentication middleware)
+        if (!userId) {
+            return res.status(400).json({ message: "User ID is required" });
+        }
+
+        // Initialize likes array if not already initialized
+        if (!curBlog.likes) {
+            curBlog.likes = []; // Initialize likes as an empty array if null or undefined
+        }
+
+        // Toggle the like status
+        if (curBlog.likes.includes(userId)) {
+            curBlog.likes.pull(userId); // Remove userId if already liked
+        } else {
+            curBlog.likes.push(userId); // Add userId if not liked
+        }
+
+        // Save the updated blog
+        await curBlog.save();
+
+        // Return a success response
+        return res.status(200).json({ 
+            message: "Reaction updated successfully", 
+            likesCount: curBlog.likes.length, // Return the updated like count
+            liked: curBlog.likes.includes(userId) // Return the current liked status for the user
+        });
+
+    } catch (error) {
         console.error("Error reacting to blog:", error.message);
 
-        // Handle specific validation errors
+        // Handle specific validation errors or other errors
         if (error.name === "ValidationError") {
             return res.status(400).json({ error: error.message });
         }
+
+        // Catch all other errors
+        return res.status(500).json({ message: "Internal server error" });
     }
-   }
+}
+
 
 module.exports = { createBlog, reactOnBlog };
