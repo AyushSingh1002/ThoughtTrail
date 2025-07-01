@@ -34,6 +34,10 @@ app.use("/", router);
 app.use("/", blogRout);
 app.use("/", CommentRouter);
 
+app.get('/loaderio-45035bbc59e5eef716c5b5068298ae29.txt', (req, res) => {
+  res.type('text/plain'); // Set proper content type
+  res.send('loaderio-45035bbc59e5eef716c5b5068298ae29');
+});
 
 // Start the server
 app.listen(port, () => {
